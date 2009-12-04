@@ -10,5 +10,6 @@ public interface Node {
 	void notify(Node predecessor);
 	Pair<Node, Boolean> getCloserNode(NodeKey wanted);
 	int getPort();
+	String getIp();
 
 }

@@ -1,6 +1,7 @@
 package decentchat.internal.nodes;
 
 import java.rmi.RemoteException;
+import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 
@@ -45,6 +46,15 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
 	public void notify(Node predecessor) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public String getIp() {
+		try {
+			return NodeImpl.getClientHost();
+		} catch (ServerNotActiveException e) {
+			return null;
+		}
 	}
 
 }

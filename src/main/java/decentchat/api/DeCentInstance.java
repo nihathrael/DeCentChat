@@ -1,22 +1,38 @@
 package decentchat.api;
 
-import java.net.MalformedURLException;
 import java.rmi.Naming;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
+
+import decentchat.internal.nodes.Node;
 
 public class DeCentInstance {
+	
+	private String ip;
+	private int port;
 
-	public DeCentInstance(String bootstrap_ip, int port) {
+	/**
+	 * The {@link DeCentInstance} is the main instance the client will be 
+	 * using when using the DeCentChat protocol. It defines the main
+	 * public interface.
+	 *   
+	 */
+	public DeCentInstance() {		
+	}
+	
+	public boolean init(String bootstrap_ip, int port) {
+		this.port = port;
 		try {
-			Node bootstrapNode = (Node)Naming.lookup("rmi://" + bootstrap_ip +":" +port+ "/node");
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		} catch (NotBoundException e) {
-			e.printStackTrace();
+			Node bootstrapNode = (Node)Naming.lookup("rmi://" + bootstrap_ip +":" +this.port+ "/node");
+			ip = bootstrapNode.getIp();
+		} catch (Exception e) {
+			System.err.println("Problem connecting to " + bootstrap_ip + ":" + port);
+			return false;
 		}
+		if(ip == null) return false;
+		return true;
+	}
+	
+	public int getPort() {
+		return this.port;
 	}
 	
 }

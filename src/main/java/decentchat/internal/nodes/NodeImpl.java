@@ -12,7 +12,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
 	private Node predecessor;
 	private List<Node> successors;
 
-	protected NodeImpl() throws RemoteException {
+	public NodeImpl() throws RemoteException {
 		super();
 	}
 

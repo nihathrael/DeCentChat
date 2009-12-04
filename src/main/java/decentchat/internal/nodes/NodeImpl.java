@@ -5,6 +5,9 @@ import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 
+import decentchat.internal.NodeKey;
+import decentchat.internal.Pair;
+
 public class NodeImpl extends UnicastRemoteObject implements Node {
 	
 	private NodeKey key;

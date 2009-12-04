@@ -1,4 +1,4 @@
-package decentchat.internal.nodes;
+package decentchat.internal;
 
 public class Pair<T1, T2> {
 	public T1 first;

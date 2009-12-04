@@ -2,6 +2,9 @@ package decentchat.internal.nodes;
 
 import java.util.List;
 
+import decentchat.internal.NodeKey;
+import decentchat.internal.Pair;
+
 public interface Node {
 	
 	NodeKey getKey();

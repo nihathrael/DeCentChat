@@ -88,12 +88,7 @@ public class NodeKey implements Comparable<NodeKey> {
 	}
 	
 	public String toString() {
-		BigInteger bi = new BigInteger(hash);
-	    String ret = bi.toString(16);
-	    if (ret.length() % 2 != 0) {
-	        ret = "0"+ret;
-	    }
-	    return ret;
+	    return new BigInteger(hash).toString(16);
 	}
 
 }

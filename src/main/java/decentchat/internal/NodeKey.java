@@ -85,5 +85,13 @@ public class NodeKey implements Comparable<NodeKey> {
 			return false;
 		return true;
 	}
+	
+	public String toString() {
+	    String ret = "";
+	    for (int i = 0; i < hash.length; ++i) {
+	        ret += String.format("%02X", hash[i]);
+	    }
+	    return ret;
+	}
 
 }

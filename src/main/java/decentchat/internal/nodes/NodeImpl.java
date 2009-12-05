@@ -141,5 +141,9 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	public List<Node> getFingers() {
 		return fingers;
 	}
+	
+	public String toString() {
+		return key.toString();
+	}
 
 }

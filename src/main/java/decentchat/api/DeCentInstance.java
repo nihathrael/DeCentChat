@@ -29,7 +29,7 @@ public class DeCentInstance {
 		Node bootstrapNode = null;
 		try {
 			bootstrapNode = (Node)Naming.lookup("rmi://" + bootstrap_ip +":" +this.port+ "/node");
-			ip = bootstrapNode.getIp();
+			ip = bootstrapNode.getIP();
 			// Now init registry
 			System.setProperty("java.rmi.server.hostname", ip);
 			reg = LocateRegistry.createRegistry(1099);

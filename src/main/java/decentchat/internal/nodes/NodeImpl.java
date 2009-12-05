@@ -18,7 +18,6 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	private Node successor = null;
 	private List<Node> successors = new LinkedList<Node>();
 	private List<Node> fingers = new LinkedList<Node>();
-	private int last_fixed_finger = -1;
 
 	public NodeImpl(NodeKey key, Node join) throws RemoteException {
 		super();
@@ -92,38 +91,6 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	    return node_list;
 	}
 	
-	public void stabilize() {
-		NodeKey hash = key.inc(1);
-	    Node x = successor.getPredecessor();
-	    if (x != null &&
-	    		// we're either pointing to ourselves
-	    		((successor.getKey().compareTo(key) == 0 &&x.getKey().compareTo(key) != 0)
-	    		// or there is a node between us and successor
-	            || (x.getKey().isWithin(hash, successor.getKey())))) {
-	        successor = x;
-	        successors.add(0, x);
-	    }
-	    successor.notify(this);
-	}
-	
-	public void fixFingers() {
-		last_fixed_finger += 1;
-	    if (last_fixed_finger >= fingers.size()) {
-	        last_fixed_finger = 0;
-	    }
-	    NodeKey hash = key.inc((long) Math.pow(2, last_fixed_finger));
-	    fingers.set(last_fixed_finger, findSuccessor(hash));
-	}
-	
-	public void fixSuccessors() {
-	    List<Node> succs = successor.getSuccessors();
-	    succs.add(0, successor);
-	    if (succs.size() > successors.size()) {
-	    	succs = succs.subList(0, successors.size()-1);
-	    }
-	    successors = succs;
-	}
-
 	@Override
 	public NodeKey getKey() {
 		return key;
@@ -153,6 +120,18 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 		} catch (ServerNotActiveException e) {
 			return null;
 		}
+	}
+
+	public Node getSuccessor() {
+		return successor;
+	}
+
+	public void setSuccessor(Node successor) {
+		this.successor = successor;
+	}
+
+	public List<Node> getFingers() {
+		return fingers;
 	}
 
 }

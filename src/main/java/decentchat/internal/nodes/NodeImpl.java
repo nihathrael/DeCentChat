@@ -18,6 +18,8 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	private Node successor = null;
 	private List<Node> successors = new LinkedList<Node>();
 	private List<Node> fingers = new LinkedList<Node>();
+	static final int MAX_SUCCESSOR_COUNT = 10;
+	static final int MAX_FINGER_COUNT = 31;
 
 	public NodeImpl(NodeKey key, Node join) throws RemoteException {
 		super();

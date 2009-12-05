@@ -4,17 +4,22 @@ import java.util.List;
 
 import decentchat.internal.NodeKey;
 
-public class RingMaintainer {
+public class RingMaintainer extends Thread {
 	
-	private static final int MAX_FINGER_COUNT = 31;
-	private static final int MAX_SUCCESSOR_COUNT = 10;
+	private static final int SLEEP_TIME = 1000;
 	
-	NodeImpl node;
+	private NodeImpl node;
 	private int last_fixed_finger;
+	private boolean stillRunning;
+	
+	public void abort() {
+		stillRunning = false;
+	}
 	
 	public RingMaintainer(NodeImpl node) {
 		this.node = node;
 		last_fixed_finger = -1;
+		stillRunning = true;
 	}
 
 	public void stabilize() {
@@ -33,7 +38,7 @@ public class RingMaintainer {
 	
 	public void fixFingers() {
 		last_fixed_finger += 1;
-	    if (last_fixed_finger >= MAX_FINGER_COUNT) {
+	    if (last_fixed_finger >= NodeImpl.MAX_FINGER_COUNT) {
 	        last_fixed_finger = 0;
 	    }
 	    NodeKey hash = node.getKey().inc((long) Math.pow(2, last_fixed_finger));
@@ -43,11 +48,28 @@ public class RingMaintainer {
 	public void fixSuccessors() {
 	    List<Node> succs = node.getSuccessor().getSuccessors();
 	    succs.add(0, node.getSuccessor());
-	    if (succs.size() > MAX_SUCCESSOR_COUNT) {
-	    	succs = succs.subList(0, MAX_SUCCESSOR_COUNT-1);
+	    if (succs.size() > NodeImpl.MAX_SUCCESSOR_COUNT) {
+	    	succs = succs.subList(0, NodeImpl.MAX_SUCCESSOR_COUNT-1);
 	    }
 	    node.getSuccessors().clear();
 	    node.getSuccessors().addAll(succs);
+	}
+
+	@Override
+	public void run() {
+		while (true) {
+			stabilize();
+			if (!stillRunning) return;
+			fixSuccessors();
+			if (!stillRunning) return;
+			fixFingers();
+			if (!stillRunning) return;
+			try {
+				Thread.sleep(SLEEP_TIME);
+			} catch (InterruptedException e) {
+			}
+			if (!stillRunning) return;
+		}
 	}
 
 }

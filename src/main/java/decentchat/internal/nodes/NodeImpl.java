@@ -4,7 +4,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,6 +11,8 @@ import decentchat.internal.NodeKey;
 import decentchat.internal.Pair;
 
 public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
+
+	private static final long serialVersionUID = 8533464683952827752L;
 	
 	private NodeKey key;
 	private Node predecessor = null;

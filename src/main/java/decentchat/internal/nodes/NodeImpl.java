@@ -18,9 +18,9 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	private Node successor = null;
 	private List<Node> successors = new LinkedList<Node>();
 	private List<Node> fingers = new LinkedList<Node>();
-	static final int MAX_SUCCESSOR_COUNT = 10;
-	static final int MAX_FINGER_COUNT = 31;
-
+	public static final int MAX_FINGER_COUNT = 31;
+	public static final int MAX_SUCCESSOR_COUNT = 10;
+	
 	public NodeImpl(NodeKey key, Node join) throws RemoteException {
 		super();
 		this.key = key;
@@ -42,14 +42,14 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	public Node findSuccessor(NodeKey wanted, Node start) {
 	    Node n = start;
 	    while (true) {
-	        Pair<Node, Boolean> pair = n.getCloserNode(wanted);
+	        Pair<Node, Boolean> pair = n.findCloserNode(wanted);
 	        n = pair.first;
 	        if (pair.second) return n;
 	    }
 	}
 
 	@Override
-	public Pair<Node, Boolean> getCloserNode(NodeKey wanted) {
+	public Pair<Node, Boolean> findCloserNode(NodeKey wanted) {
 	    wanted = wanted.inc(1);
 	    if (wanted == key) {
 	        return new Pair<Node, Boolean>(this, true);

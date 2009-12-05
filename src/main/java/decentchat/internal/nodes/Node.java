@@ -8,10 +8,11 @@ import decentchat.internal.Pair;
 public interface Node {
 	
 	NodeKey getKey();
+	int getPort();
 	Node getPredecessor();
 	List<Node> getSuccessors();
 	void notify(Node predecessor);
 	Pair<Node, Boolean> getCloserNode(NodeKey wanted);
-	int getPort();
+	Node findSuccessor(NodeKey wanted);
 
 }

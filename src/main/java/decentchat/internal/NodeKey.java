@@ -2,6 +2,8 @@ package decentchat.internal;
 
 import java.util.Arrays;
 
+import decentchat.internal.nodes.Node;
+
 public class NodeKey {
 	
 	private byte[] hash;
@@ -51,6 +53,11 @@ public class NodeKey {
 	        ++ptr;
 	    }
 		return new NodeKey(next);
+	}
+
+	public boolean isWithin(NodeKey first, NodeKey last) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

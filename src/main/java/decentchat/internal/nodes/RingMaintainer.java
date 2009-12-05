@@ -2,11 +2,15 @@ package decentchat.internal.nodes;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import decentchat.internal.NodeKey;
 
 public class RingMaintainer extends Thread {
 	
 	private static final int SLEEP_TIME = 1000;
+
+	static Logger logger = Logger.getLogger(RingMaintainer.class);
 	
 	private NodeImpl node;
 	private int last_fixed_finger;
@@ -31,6 +35,7 @@ public class RingMaintainer extends Thread {
 	    		// or there is a node between us and node.getSuccessor()
 	            || (x.getKey().isWithin(hash, node.getSuccessor().getKey())))) {
 	        node.setSuccessor(x);
+	        logger.debug("New successor is " + x);
 	        node.getSuccessors().add(0, x);
 	    }
 	    node.getSuccessor().notify(node);
@@ -71,5 +76,5 @@ public class RingMaintainer extends Thread {
 			if (!stillRunning) return;
 		}
 	}
-
+	
 }

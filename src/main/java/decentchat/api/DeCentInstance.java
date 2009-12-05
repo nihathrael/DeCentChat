@@ -26,7 +26,7 @@ public class DeCentInstance {
 	}
 	
 	public boolean init(String bootstrap_ip, int bootstrap_port, int registry_port) {
-		this.port = port;
+		this.port = registry_port;
 		Node bootstrapNode = null;
 		try {
 			bootstrapNode = (Node)Naming.lookup("rmi://" + bootstrap_ip +":" +this.port+ "/node");
@@ -35,7 +35,7 @@ public class DeCentInstance {
 			System.setProperty("java.rmi.server.hostname", ip);
 			reg = LocateRegistry.createRegistry(registry_port);
 		} catch (Exception e) {
-			System.err.println("Problem connecting to " + bootstrap_ip + ":" + port);
+			System.err.println("Problem connecting to " + bootstrap_ip + ":" + this.port);
 			return false;
 		}
 		if(ip == null || reg == null) return false;
@@ -51,6 +51,8 @@ public class DeCentInstance {
 	}
 
 	public void init(String hostname, int registry_port) {
+		this.ip = hostname;
+		this.port = registry_port;
 		System.setProperty("java.rmi.server.hostname", ip);
 		
 		try {

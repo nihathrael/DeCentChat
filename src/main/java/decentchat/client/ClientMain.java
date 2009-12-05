@@ -1,8 +1,8 @@
 package decentchat.client;
 
-import decentchat.api.DeCentInstance;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import decentchat.api.DeCentInstance;
 
 public class ClientMain {
 
@@ -10,11 +10,13 @@ public class ClientMain {
 
 	public ClientMain(String ip, int port, String bootstrapIP, int bootstrapPort) {
 		decentInstance = new DeCentInstance();
-		if (ip == null) {
-			decentInstance.init(bootstrapIP, bootstrapPort, port);
+		if (ip != null) {
+			decentInstance.init(ip, port); // We want to create a new network
 		} else {
-			decentInstance.init(ip, port);
+			// Join an existing network
+			decentInstance.init(bootstrapIP, bootstrapPort, port);
 		}
+		System.out.println("Created the decentInstance");
 	}
 
 	/**

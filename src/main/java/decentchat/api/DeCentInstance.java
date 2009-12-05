@@ -48,7 +48,10 @@ public class DeCentInstance {
 			logger.error("Problem connecting", e);
 			return false;
 		}
-		if(ip == null || reg == null) return false;
+		if(ip == null || reg == null) {
+			logger.error("Problem fetching ip:" + ip);
+			return false;
+		}
 		createLocalNode(NodeKey.MAX_KEY, bootstrapNode); 
 		return true;
 	}

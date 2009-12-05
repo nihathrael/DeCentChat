@@ -102,7 +102,7 @@ public class DeCentInstance {
 			logger.debug("Starting Maintainer...");
 			maintainer = new RingMaintainer(localNode);
 			maintainer.start();
-			logger.debug("Done");
+			logger.debug("Started Maintainer successfully!");
 		} catch (RemoteException e) {
 			logger.error("Error creating localnode", e);
 		} catch (AlreadyBoundException e) {

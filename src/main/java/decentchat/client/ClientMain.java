@@ -73,6 +73,6 @@ public class ClientMain {
         	System.out.println("--conport <port> - Port of the known Node. Default: 1099");
         	System.exit(1);
         }
-        ClientMain main = new ClientMain(ip, port, bootstrapIP, bootstrapPort);
+        new ClientMain(ip, port, bootstrapIP, bootstrapPort);
 	}
 }

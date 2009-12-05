@@ -11,8 +11,9 @@ public interface Node {
 	String getIP();
 	Node getPredecessor();
 	List<Node> getSuccessors();
+	
 	void notify(Node predecessor);
-	Pair<Node, Boolean> getCloserNode(NodeKey wanted);
+	Pair<Node, Boolean> findCloserNode(NodeKey wanted);
 	Node findSuccessor(NodeKey wanted);
 
 }

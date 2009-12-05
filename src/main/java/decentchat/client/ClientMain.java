@@ -1,14 +1,20 @@
 package decentchat.client;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import decentchat.api.DeCentInstance;
 
 public class ClientMain {
 
+	static Logger logger = Logger.getLogger(ClientMain.class);
+
 	private final DeCentInstance decentInstance;
 
 	public ClientMain(String ip, int port, String bootstrapIP, int bootstrapPort) {
+		logger.info("Starting Client...");
 		decentInstance = new DeCentInstance();
 		if (ip != null) {
 			decentInstance.init(ip, port); // We want to create a new network
@@ -16,7 +22,7 @@ public class ClientMain {
 			// Join an existing network
 			decentInstance.init(bootstrapIP, bootstrapPort, port);
 		}
-		System.out.println("Created the decentInstance");
+		logger.info("Created the decentInstance");
 		while(true) {
 			
 		}
@@ -26,6 +32,7 @@ public class ClientMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		BasicConfigurator.configure();
 		//Parse arguments
 		String ip = null;
 		int port = 1099;
@@ -53,7 +60,7 @@ public class ClientMain {
         	bootstrapPort = Integer.valueOf((String)options.valueOf("conport"));
         }
         if(ip == null && bootstrapIP == null) {
-        	System.err.println("You must specifiy either an ip to create a new network,\n" +
+        	logger.error("You must specifiy either an ip to create a new network,\n" +
         			"or an ip and port to connect to a network");
         	System.exit(1);
         }

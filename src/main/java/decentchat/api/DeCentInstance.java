@@ -5,12 +5,16 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+import org.apache.log4j.Logger;
+
 import decentchat.internal.NodeKey;
 import decentchat.internal.nodes.Node;
 import decentchat.internal.nodes.NodeImpl;
 import decentchat.internal.nodes.RingMaintainer;
 
 public class DeCentInstance {
+	
+	static Logger logger = Logger.getLogger(DeCentInstance.class);
 	
 	private String ip;
 	private int port;
@@ -40,7 +44,7 @@ public class DeCentInstance {
 			// Now init registry
 			createLocalRegistry(ip, registry_port);
 		} catch (Exception e) {
-			System.err.println("Problem connecting to " + bootstrap_ip + ":" + this.port);
+			logger.error("Problem connecting to " + bootstrap_ip + ":" + this.port);
 			return false;
 		}
 		if(ip == null || reg == null) return false;

@@ -2,12 +2,19 @@ package decentchat.internal;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public class Hasher {
 	
 	public final static int HASH_LENGTH_IN_BYTES = 40;
 	public final static String HASH_ALGORITHM = "SHA-1";
 
+	/**
+	 * Hashes the given input string using the hash
+	 * algorithm specified by HASH_LENGTH_IN_BYTES.
+	 * @param input
+	 * @return
+	 */
 	public static byte[] generateHash(String input) {
 		MessageDigest md = null;
 		try {
@@ -16,9 +23,19 @@ public class Hasher {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    byte[] sha1hash = new byte[40];
 	    md.update(input.getBytes(), 0, input.length());
 	    return md.digest();
+	}
+
+	/**
+	 * Generates a hash filled with the given byte.
+	 * @param value The byte to fill the hash with.
+	 * @return The generated hash.
+	 */
+	public static byte[] generateHash(byte value) {
+		byte[] hash = new byte[HASH_LENGTH_IN_BYTES];
+		Arrays.fill(hash, value);
+		return hash;
 	}
 	
 }

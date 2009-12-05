@@ -6,8 +6,8 @@ import decentchat.internal.nodes.Node;
 
 public class NodeKey implements Comparable<NodeKey> {
 
-	static final NodeKey MIN_KEY = new NodeKey(Hasher.generateHash(Byte.MIN_VALUE));
-	static final NodeKey MAX_KEY = new NodeKey(Hasher.generateHash(Byte.MAX_VALUE));
+	public static final NodeKey MIN_KEY = new NodeKey(Hasher.generateHash(Byte.MIN_VALUE));
+	public static final NodeKey MAX_KEY = new NodeKey(Hasher.generateHash(Byte.MAX_VALUE));
 	
 	private byte[] hash;
 	

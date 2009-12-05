@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+import decentchat.internal.NodeKey;
 import decentchat.internal.nodes.Node;
 import decentchat.internal.nodes.NodeImpl;
 
@@ -39,7 +40,7 @@ public class DeCentInstance {
 		}
 		if(ip == null || reg == null) return false;
 		try {
-			localNode = new NodeImpl(); //TODO
+			localNode = new NodeImpl(NodeKey.MIN_KEY, bootstrapNode); //TODO
 		} catch (RemoteException e) {
 		}
 		return true;
@@ -58,7 +59,7 @@ public class DeCentInstance {
 			e.printStackTrace();
 		}
 		try {
-			localNode = new NodeImpl(); 
+			localNode = new NodeImpl(NodeKey.MIN_KEY); 
 		} catch (RemoteException e) {
 		}
 	}

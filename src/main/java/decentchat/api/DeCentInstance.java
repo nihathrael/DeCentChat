@@ -49,7 +49,7 @@ public class DeCentInstance {
 			return false;
 		}
 		if(ip == null || reg == null) return false;
-		createLocalNode(NodeKey.MIN_KEY, bootstrapNode); 
+		createLocalNode(NodeKey.MAX_KEY, bootstrapNode); 
 		return true;
 	}
 	

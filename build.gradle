@@ -1,0 +1,11 @@
+usePlugin 'java'
+
+task rmic(dependsOn: compileJava) << {
+	String command = """rmic -classpath ${sourceSets.main.classesDir} decentchat.internal.nodes.NodeImpl"""
+	println command
+	String test = command.execute().text
+	println test
+	
+}
+
+jar.dependsOn(rmic)

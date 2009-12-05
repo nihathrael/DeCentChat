@@ -90,6 +90,7 @@ public class DeCentInstance {
 	 */
 	private void createLocalNode(NodeKey key, Node bootstrapNode) {
 		try {
+			logger.debug("Creating localNode");
 			if(bootstrapNode == null) {
 				localNode = new NodeImpl(key);
 			} else {
@@ -101,7 +102,9 @@ public class DeCentInstance {
 			maintainer.start();
 			logger.debug("Done");
 		} catch (RemoteException e) {
+			logger.error("Error creating localnode", e);
 		} catch (AlreadyBoundException e) {
+			logger.error("Error creating localnode", e);
 		}
 	}
 	

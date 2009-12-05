@@ -1,5 +1,6 @@
 package decentchat.api;
 
+import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -91,11 +92,13 @@ public class DeCentInstance {
 			} else {
 				localNode = new NodeImpl(NodeKey.MIN_KEY, bootstrapNode);
 			}
+			reg.bind("node", localNode);
 			logger.debug("Starting Maintainer...");
 			maintainer = new RingMaintainer(localNode);
 			maintainer.start();
 			logger.debug("Done");
 		} catch (RemoteException e) {
+		} catch (AlreadyBoundException e) {
 		}
 	}
 	

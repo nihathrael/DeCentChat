@@ -1,7 +1,27 @@
 usePlugin 'java'
+usePlugin 'eclipse'
+
+version = "0.1"
+defaultTasks "jar"
+
+repositories {
+	mavenCentral()
+}
+
+manifest.mainAttributes(
+	"Implementation-Title": "DeCentClient",
+	"Implementation-Version": version,
+	"Main-Class": "decentchat.client.ClientMain"
+)
+
+
+dependencies {
+	compile group: 'net.sf.jopt-simple', name: 'jopt-simple', version: '3.2-rc1'
+}
+
 
 task rmic(dependsOn: compileJava) << {
-	String command = """rmic -classpath ${sourceSets.main.classesDir} decentchat.internal.nodes.NodeImpl"""
+	String command = """rmic -classpath ${sourceSets.main.classesDir} -d ${sourceSets.main.classesDir} decentchat.internal.nodes.NodeImpl"""
 	println command
 	String test = command.execute().text
 	println test
@@ -9,3 +29,9 @@ task rmic(dependsOn: compileJava) << {
 }
 
 jar.dependsOn(rmic)
+jar.doFirst {
+	for(file in configurations.compile) {
+		jar.merge(file)
+	}
+}
+

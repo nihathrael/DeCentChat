@@ -8,7 +8,6 @@ import decentchat.internal.Pair;
 public interface Node {
 	
 	NodeKey getKey();
-	int getPort();
 	String getIP();
 	Node getPredecessor();
 	List<Node> getSuccessors();

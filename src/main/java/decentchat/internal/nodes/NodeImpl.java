@@ -14,26 +14,23 @@ import decentchat.internal.Pair;
 public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	
 	private NodeKey key;
-	private int port;
-	private Node predecessor;
-	private Node successor;
-	private List<Node> successors;
-	private List<Node> fingers;
-	private int next_finger;
+	private Node predecessor = null;
+	private Node successor = null;
+	private List<Node> successors = new LinkedList<Node>();
+	private List<Node> fingers = new LinkedList<Node>();
+	private int last_fixed_finger = -1;
 
-	public NodeImpl() throws RemoteException {
+	public NodeImpl(NodeKey key, Node join) throws RemoteException {
 		super();
-	}
-	
-	public void create() {
-	    predecessor = null;
-	    successor = this;
-	}
-	
-	public void join(Node n) {
-	    predecessor = null;
-	    successor = findSuccessor(key, n);
+		this.key = key;
+	    successor = findSuccessor(key, join);
 	    successor.notify(this);
+	}
+
+	public NodeImpl(NodeKey key) throws RemoteException {
+		super();
+		this.key = key;
+	    successor = this;
 	}
 
 	@Override
@@ -110,12 +107,12 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	}
 	
 	public void fixFingers() {
-		next_finger += 1;
-	    if (next_finger >= fingers.size()) {
-	        next_finger = 0;
+		last_fixed_finger += 1;
+	    if (last_fixed_finger >= fingers.size()) {
+	        last_fixed_finger = 0;
 	    }
-	    NodeKey hash = key.inc((long) Math.pow(2, next_finger));
-	    fingers.set(next_finger, findSuccessor(hash));
+	    NodeKey hash = key.inc((long) Math.pow(2, last_fixed_finger));
+	    fingers.set(last_fixed_finger, findSuccessor(hash));
 	}
 	
 	public void fixSuccessors() {
@@ -130,11 +127,6 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	@Override
 	public NodeKey getKey() {
 		return key;
-	}
-
-	@Override
-	public int getPort() {
-		return port;
 	}
 
 	@Override

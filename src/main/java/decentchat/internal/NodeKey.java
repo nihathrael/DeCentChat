@@ -37,14 +37,14 @@ public class NodeKey implements Comparable<NodeKey> {
 		return true;
 	}
 
-	public NodeKey inc(int offset) {
+	public NodeKey inc(long d) {
 		byte[] next = Arrays.copyOf(hash, hash.length);
 	    byte carry = 0;
 	    byte ptr = 0;
-	    while (offset > 0 || carry > 0) {
+	    while (d > 0 || carry > 0) {
 	        if (ptr == Hasher.HASH_LENGTH_IN_BYTES)
 	            break;
-	        short val = (short) (next[ptr] + (offset & 0xFF) + carry);
+	        short val = (short) (next[ptr] + (d & 0xFF) + carry);
 	        if (val > 255) {
 	            carry = 1;
 	            next[ptr] = (byte) (val & 0xFF);
@@ -52,7 +52,7 @@ public class NodeKey implements Comparable<NodeKey> {
 	            carry = 0;
 	            next[ptr] = (byte) val;
 	        }
-	        offset = offset >> 8;
+	        d = d >> 8;
 	        ++ptr;
 	    }
 		return new NodeKey(next);

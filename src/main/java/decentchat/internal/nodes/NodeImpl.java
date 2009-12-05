@@ -4,6 +4,8 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import decentchat.internal.NodeKey;
@@ -17,9 +19,35 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	private Node successor;
 	private List<Node> successors;
 	private List<Node> fingers;
+	private int next_finger;
 
 	public NodeImpl() throws RemoteException {
 		super();
+	}
+	
+	public void create() {
+	    predecessor = null;
+	    successor = this;
+	}
+	
+	public void join(Node n) {
+	    predecessor = null;
+	    successor = findSuccessor(key, n);
+	    successor.notify(this);
+	}
+
+	@Override
+	public Node findSuccessor(NodeKey wanted) {
+		return findSuccessor(wanted, this);
+	}
+	
+	public Node findSuccessor(NodeKey wanted, Node start) {
+	    Node n = start;
+	    while (true) {
+	        Pair<Node, Boolean> pair = n.getCloserNode(wanted);
+	        n = pair.first;
+	        if (pair.second) return n;
+	    }
 	}
 
 	@Override
@@ -44,9 +72,59 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	    return successor;
 	}
 
+	/**
+	 * Builds a list of all known nodes, ordered
+	 * by their proximity to this node when going
+	 * up the chord ring.
+	 * @return A list of all known nodes.
+	 */
 	private List<Node> buildNodeList() {
-		// TODO Auto-generated method stub
-		return null;
+	    if (successors.size() == 0) {
+	        return fingers;
+	    }
+	    List<Node> node_list = new LinkedList<Node>();
+	    Node last_successor = successors.get(successors.size()-1);
+	    for (int i = 0; i < fingers.size(); ++i) {
+	        if (fingers.get(i).getKey().isWithin(key, last_successor.getKey())) {
+	            break;
+	        } else {
+	            node_list.add(fingers.get(i));
+	        }
+	    }
+	    node_list.addAll(successors);
+	    return node_list;
+	}
+	
+	public void stabilize() {
+		NodeKey hash = key.inc(1);
+	    Node x = successor.getPredecessor();
+	    if (x != null &&
+	    		// we're either pointing to ourselves
+	    		((successor.getKey().compareTo(key) == 0 &&x.getKey().compareTo(key) != 0)
+	    		// or there is a node between us and successor
+	            || (x.getKey().isWithin(hash, successor.getKey())))) {
+	        successor = x;
+	        successors.add(0, x);
+	    }
+	    successor.notify(this);
+	}
+	
+	public void fixFingers() {
+		next_finger += 1;
+	    if (next_finger >= fingers.size()) {
+	        next_finger = 0;
+	    }
+	    NodeKey hash = key.inc((long) Math.pow(2, next_finger));
+	    fingers.set(next_finger, findSuccessor(hash));
+	}
+	
+	public void fixSuccessors() {
+	    List<Node> succs = successor.getSuccessors();
+	    succs.add(0, successor);
+	    if (succs.size() > successors.size()) {
+	    	succs = succs.subList(0, successors.size()-1);
+	    }
+	    successors = succs;
 	}
 
 	@Override
@@ -73,16 +151,6 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	public void notify(Node n) {
 	    if (predecessor == null || n.getKey().isWithin(predecessor.getKey(), key)) {
 	        predecessor = n;
-	    }
-	}
-
-	@Override
-	public Node findSuccessor(NodeKey wanted) {
-	    Node n = this;
-	    while (true) {
-	        Pair<Node, Boolean> pair = n.getCloserNode(wanted);
-	        n = pair.first;
-	        if (pair.second) return n;
 	    }
 	}
 

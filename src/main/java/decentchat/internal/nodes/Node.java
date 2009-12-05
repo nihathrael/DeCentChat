@@ -1,21 +1,21 @@
 package decentchat.internal.nodes;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.List;
 
 import decentchat.internal.NodeKey;
 import decentchat.internal.Pair;
 
-public interface Node {
+public interface Node extends Remote {
 	
-	NodeKey getKey();
-	String getIP();
-	Node getPredecessor();
-	List<Node> getSuccessors();
+	NodeKey getKey() throws RemoteException;
+	String getIP() throws RemoteException;
+	Node getPredecessor() throws RemoteException;
+	List<Node> getSuccessors() throws RemoteException;
 	
-	void notify(Node predecessor);
-	Pair<Node, Boolean> findCloserNode(NodeKey wanted);
-	Node findSuccessor(NodeKey wanted);
-	
-	String toString();
+	void notify(Node predecessor) throws RemoteException;
+	Pair<Node, Boolean> findCloserNode(NodeKey wanted) throws RemoteException;
+	Node findSuccessor(NodeKey wanted) throws RemoteException;
 
 }

@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import decentchat.internal.NodeKey;
 import decentchat.internal.Pair;
 
-public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
+public class NodeImpl extends UnicastRemoteObject implements Node {
 
 	private static final long serialVersionUID = 8533464683952827752L;
 
@@ -40,11 +40,11 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	}
 
 	@Override
-	public Node findSuccessor(NodeKey wanted) {
+	public Node findSuccessor(NodeKey wanted) throws RemoteException {
 		return findSuccessor(wanted, this);
 	}
 	
-	public Node findSuccessor(NodeKey wanted, Node start) {
+	public Node findSuccessor(NodeKey wanted, Node start) throws RemoteException {
 	    Node n = start;
 	    while (true) {
 	        Pair<Node, Boolean> pair = n.findCloserNode(wanted);
@@ -54,7 +54,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	}
 
 	@Override
-	public Pair<Node, Boolean> findCloserNode(NodeKey wanted) {
+	public Pair<Node, Boolean> findCloserNode(NodeKey wanted) throws RemoteException {
 	    wanted = wanted.inc(1);
 	    if (wanted == key) {
 	        return new Pair<Node, Boolean>(this, true);
@@ -65,7 +65,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	    }
 	}
 
-	private Node closestPrecedingNode(NodeKey wanted) {
+	private Node closestPrecedingNode(NodeKey wanted) throws RemoteException {
 	    List<Node> nlist = buildNodeList();
 	    for (int i = 0; i < nlist.size(); ++i) {
 	         if (nlist.get(i).getKey().isWithin(key, wanted)) {
@@ -80,8 +80,9 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	 * by their proximity to this node when going
 	 * up the chord ring.
 	 * @return A list of all known nodes.
+	 * @throws RemoteException 
 	 */
-	private List<Node> buildNodeList() {
+	private List<Node> buildNodeList() throws RemoteException {
 	    if (successors.size() == 0) {
 	        return fingers;
 	    }
@@ -99,7 +100,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	}
 
 	@Override
-	public void notify(Node n) {
+	public void notify(Node n) throws RemoteException {
 		logger.debug("Got notified by " + n);
 	    if (predecessor == null || n.getKey().isWithin(predecessor.getKey(), key)) {
 	        predecessor = n;

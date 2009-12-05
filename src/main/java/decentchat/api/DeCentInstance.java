@@ -41,7 +41,9 @@ public class DeCentInstance {
 		Node bootstrapNode = null;
 		try {
 			bootstrapNode = (Node)Naming.lookup("rmi://" + bootstrap_ip +":" +this.port+ "/node");
+			logger.debug("Polling ip from bootstrap node...");
 			ip = bootstrapNode.getIP();
+			logger.debug("Recieved IP:" + ip);
 			// Now init registry
 			createLocalRegistry(ip, registry_port);
 		} catch (Exception e) {

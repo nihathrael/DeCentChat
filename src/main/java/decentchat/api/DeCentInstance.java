@@ -44,7 +44,7 @@ public class DeCentInstance {
 			// Now init registry
 			createLocalRegistry(ip, registry_port);
 		} catch (Exception e) {
-			logger.error("Problem connecting to " + bootstrap_ip + ":" + this.port);
+			logger.error("Problem connecting", e);
 			return false;
 		}
 		if(ip == null || reg == null) return false;
@@ -73,8 +73,7 @@ public class DeCentInstance {
 			// Start the registry
 			reg = LocateRegistry.createRegistry(port);
 		} catch (RemoteException e) {
-			System.err.println("Problem creating the Registry!");
-			e.printStackTrace();
+			logger.error("Problem creating the Registry!", e);
 		}
 	}
 	
@@ -92,8 +91,10 @@ public class DeCentInstance {
 			} else {
 				localNode = new NodeImpl(NodeKey.MIN_KEY, bootstrapNode);
 			}
+			logger.debug("Starting Maintainer...");
 			maintainer = new RingMaintainer(localNode);
 			maintainer.start();
+			logger.debug("Done");
 		} catch (RemoteException e) {
 		}
 	}

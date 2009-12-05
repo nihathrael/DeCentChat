@@ -125,8 +125,10 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
 	@Override
 	public String getIP() {
 		try {
+			logger.debug("Returning ip:" + NodeImpl.getClientHost());
 			return NodeImpl.getClientHost();
 		} catch (ServerNotActiveException e) {
+			logger.debug("Error retrieving ip");
 			return null;
 		}
 	}

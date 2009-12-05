@@ -1,10 +1,13 @@
 package decentchat.internal;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-public class NodeKey implements Comparable<NodeKey> {
+public class NodeKey implements Comparable<NodeKey>, Serializable {
 
+	private static final long serialVersionUID = -8633504133195223816L;
+	
 	public static final NodeKey MIN_KEY = new NodeKey(Hasher.generateHash(Byte.MIN_VALUE));
 	public static final NodeKey MAX_KEY = new NodeKey(Hasher.generateHash(Byte.MAX_VALUE));
 	

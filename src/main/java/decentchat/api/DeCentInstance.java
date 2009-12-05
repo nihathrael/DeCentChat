@@ -52,7 +52,7 @@ public class DeCentInstance {
 			logger.error("Problem fetching ip:" + ip);
 			return false;
 		}
-		createLocalNode(NodeKey.MAX_KEY, bootstrapNode); 
+		createLocalNode(NodeKey.MAX_KEY, bootstrapNode);
 		return true;
 	}
 	

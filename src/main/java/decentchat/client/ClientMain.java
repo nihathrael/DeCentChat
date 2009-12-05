@@ -45,6 +45,7 @@ public class ClientMain {
         parser.accepts("port").withRequiredArg();
         parser.accepts("conip").withRequiredArg();
         parser.accepts("conport").withRequiredArg();
+        parser.accepts("help");
         
        	OptionSet options = parser.parse(args);
         if(options.has("ip")) {
@@ -59,9 +60,16 @@ public class ClientMain {
         if(options.has("conport")) {
         	bootstrapPort = Integer.valueOf((String)options.valueOf("conport"));
         }
-        if(ip == null && bootstrapIP == null) {
-        	logger.error("You must specifiy either an ip to create a new network,\n" +
+        if((ip == null && bootstrapIP == null) || options.has("help")) {
+        	System.out.println("You must specifiy either an ip to create a new network,\n" +
         			"or an ip and port to connect to a network");
+        	System.out.println("Options:");
+        	System.out.println("--port <portnumber> - Portnumber you want to use. Default: 1099");
+        	System.out.println("If you want to create a new network:");
+        	System.out.println("--ip <ip>        - Local ip/hostname to use (use your internet IP if you want to create a network that is visible from the internet.");
+        	System.out.println("If you want to join a network:");
+        	System.out.println("--conip <ip>     - IP of a known Node in the network (MUST be specified to connect!)");
+        	System.out.println("--conport <port> - Port of the known Node. Default: 1099");
         	System.exit(1);
         }
         ClientMain main = new ClientMain(ip, port, bootstrapIP, bootstrapPort);

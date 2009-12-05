@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<classpath>
-  <classpathentry kind="src" path="src/main/java"/>
-  <classpathentry kind="output" path="build/classes/main"/>
-  <classpathentry kind="src" path="src/test/java" output="build/classes/test"/>
-  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-  <classpathentry kind="lib" path="/home/k/.gradle/cache/net.sf.jopt-simple/jopt-simple/jars/jopt-simple-3.2-rc1.jar"/>
-</classpath>

@@ -7,12 +7,16 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import decentchat.internal.NodeKey;
 import decentchat.internal.Pair;
 
 public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 
 	private static final long serialVersionUID = 8533464683952827752L;
+
+	static Logger logger = Logger.getLogger(NodeImpl.class);
 	
 	private NodeKey key;
 	private Node predecessor = null;
@@ -93,6 +97,14 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	    node_list.addAll(successors);
 	    return node_list;
 	}
+
+	@Override
+	public void notify(Node n) {
+		logger.debug("Got notified by " + n);
+	    if (predecessor == null || n.getKey().isWithin(predecessor.getKey(), key)) {
+	        predecessor = n;
+	    }
+	}
 	
 	@Override
 	public NodeKey getKey() {
@@ -107,13 +119,6 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 	@Override
 	public List<Node> getSuccessors() {
 		return successors;
-	}
-
-	@Override
-	public void notify(Node n) {
-	    if (predecessor == null || n.getKey().isWithin(predecessor.getKey(), key)) {
-	        predecessor = n;
-	    }
 	}
 
 	@Override
@@ -135,6 +140,10 @@ public class NodeImpl extends UnicastRemoteObject implements Node, Remote {
 
 	public List<Node> getFingers() {
 		return fingers;
+	}
+	
+	public String toString() {
+		return key.toString();
 	}
 
 }

@@ -15,5 +15,7 @@ public interface Node {
 	void notify(Node predecessor);
 	Pair<Node, Boolean> findCloserNode(NodeKey wanted);
 	Node findSuccessor(NodeKey wanted);
+	
+	String toString();
 
 }

@@ -1,10 +1,11 @@
 package decentchat.client;
 
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
 import decentchat.api.DeCentInstance;
 
 public class ClientMain {

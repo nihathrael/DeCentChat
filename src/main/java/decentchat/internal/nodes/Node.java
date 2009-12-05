@@ -9,6 +9,7 @@ public interface Node {
 	
 	NodeKey getKey();
 	int getPort();
+	String getIP();
 	Node getPredecessor();
 	List<Node> getSuccessors();
 	void notify(Node predecessor);

@@ -17,6 +17,9 @@ public class ClientMain {
 			decentInstance.init(bootstrapIP, bootstrapPort, port);
 		}
 		System.out.println("Created the decentInstance");
+		while(true) {
+			
+		}
 	}
 
 	/**

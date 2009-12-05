@@ -8,13 +8,15 @@ import java.rmi.registry.Registry;
 import decentchat.internal.NodeKey;
 import decentchat.internal.nodes.Node;
 import decentchat.internal.nodes.NodeImpl;
+import decentchat.internal.nodes.RingMaintainer;
 
 public class DeCentInstance {
 	
 	private String ip;
 	private int port;
 	private Registry reg = null;
-	private Node localNode = null;
+	private NodeImpl localNode = null;
+	private RingMaintainer maintainer = null;
 
 	/**
 	 * The {@link DeCentInstance} is the main instance the client will be 
@@ -86,6 +88,8 @@ public class DeCentInstance {
 			} else {
 				localNode = new NodeImpl(NodeKey.MIN_KEY, bootstrapNode);
 			}
+			maintainer = new RingMaintainer(localNode);
+			maintainer.start();
 		} catch (RemoteException e) {
 		}
 	}

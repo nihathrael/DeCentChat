@@ -80,6 +80,7 @@ public class RingMaintainer extends Thread {
 
 	@Override
 	public void run() {
+		logger.debug("maintenance loop started");
 		while (true) {
 			stabilize();
 			if (!stillRunning) return;

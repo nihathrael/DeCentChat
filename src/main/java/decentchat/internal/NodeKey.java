@@ -1,5 +1,6 @@
 package decentchat.internal;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 
 public class NodeKey implements Comparable<NodeKey> {
@@ -87,9 +88,10 @@ public class NodeKey implements Comparable<NodeKey> {
 	}
 	
 	public String toString() {
-	    String ret = "";
-	    for (int i = 0; i < hash.length; ++i) {
-	        ret += String.format("%02X", hash[i]);
+		BigInteger bi = new BigInteger(hash);
+	    String ret = bi.toString(16);
+	    if (ret.length() % 2 != 0) {
+	        ret = "0"+ret;
 	    }
 	    return ret;
 	}

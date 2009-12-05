@@ -1,6 +1,5 @@
 package decentchat.internal.nodes;
 
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;

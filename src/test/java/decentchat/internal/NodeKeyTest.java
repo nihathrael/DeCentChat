@@ -6,10 +6,6 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 public class NodeKeyTest {
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
 	
 	@Test
 	public void testEquals() {

@@ -18,34 +18,58 @@ public class NodeKey implements Comparable<NodeKey>, Serializable {
 
 	/**
 	 * Returns a new NodeKey whose hash is bigger than the current one.
-	 * @param amount How much to add to the current key.
+	 * @param amount How much to add to the current key. Must be positive.
 	 * @return The NodeKey that is bigger than the current one.
 	 */
 	public NodeKey inc(long amount) {
-		byte[] next = Arrays.copyOf(hash, hash.length);
+		byte[] inced_key = Arrays.copyOf(hash, hash.length);
+		int[] normalized_hash = normalize(hash);
 		byte carry = 0;
 		int ptr = 0;
 		while (amount > 0 || carry > 0) {
 			if (ptr == Hasher.HASH_LENGTH_IN_BYTES)
 				break;
-			short val = (short) (next[ptr] + (amount & 0xFF) + carry);
+			int val = (int) (normalized_hash[ptr] + (amount & 0xFF) + carry);
 			if (val > 255) {
 				carry = 1;
-				next[ptr] = (byte) (val & 0xFF);
+				val &= 0xFF;
 			} else {
 				carry = 0;
-				next[ptr] = (byte) val;
 			}
+			if (val > 127) {
+				val -= 256;
+			}
+			inced_key[ptr] = (byte) (val);
 			amount = amount >> 8;
 			++ptr;
 		}
-		return new NodeKey(next);
+		return new NodeKey(inced_key);
+	}
+	
+	/**
+	 * Returns a normalized version of the given hash,
+	 * i.e. the values [0, ..., 127, -128, ..., -1]
+	 * will be transformed to [0, ..., 255].
+	 * @param hash The hash to normalize.
+	 * @return The normalized hash.
+	 */
+	private int[] normalize(byte[] hash) {
+		int[] normalized_hash = new int[hash.length];
+		for (int i = 0; i < hash.length; ++i) {
+			if (hash[i] < 0) {
+				normalized_hash[i] = hash[i] + 256;
+			} else {
+				normalized_hash[i] = hash[i];
+			}
+		}
+		return normalized_hash;
 	}
 
 	/**
 	 * Returns true if this key lies between (and including) the two given nodes.
 	 * @param first The first node in the range.
 	 * @param last The last node in the range.
+	 * @return Whether or not this node is in the given Range.
 	 */
 	public boolean isWithin(NodeKey first, NodeKey last) {
 		if (first.compareTo(last) > 0) {
@@ -58,10 +82,12 @@ public class NodeKey implements Comparable<NodeKey>, Serializable {
 
 	@Override
 	public int compareTo(NodeKey o) {
+		int[] this_hash = normalize(hash);
+		int[] o_hash = normalize(o.hash);
 		for (int i = hash.length - 1; i >= 0; --i) {
-			if (this.hash[i] > o.hash[i])
+			if (this_hash[i] > o_hash[i])
 				return 1;
-			else if (this.hash[i] < o.hash[i])
+			else if (this_hash[i] < o_hash[i])
 				return -1;
 		}
 		return 0;

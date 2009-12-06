@@ -42,7 +42,7 @@ public class NodeKeyTest {
 	}
 	
 	@Test
-	public void testNormalization() {
+	public void testIncNormalization() {
 		byte[] byte_max = Hasher.generateHash(Byte.MAX_VALUE);
 	    NodeKey inced = new NodeKey(byte_max).inc(1);
 	    byte_max[0] = -128;
@@ -65,6 +65,36 @@ public class NodeKeyTest {
 		NodeKey less = new NodeKey(Hasher.generateHash((byte) 127));
 		NodeKey more = new NodeKey(Hasher.generateHash((byte) -128));
         assertEquals(1, more.compareTo(less));
+	}
+	
+	@Test
+	public void testIsWithinSame() {
+		assertTrue(NodeKey.MIN_KEY.isWithin(NodeKey.MIN_KEY, NodeKey.MIN_KEY));
+	}
+	
+	@Test
+	public void testIsWithinZeroBasedRange() {
+		assertTrue(NodeKey.MIN_KEY.isWithin(NodeKey.MIN_KEY, NodeKey.MIN_KEY.inc(20)));
+	}
+	
+	@Test
+	public void testIsWithinSmallRange() {
+		assertTrue(NodeKey.MIN_KEY.inc(9).isWithin(NodeKey.MIN_KEY.inc(8), NodeKey.MIN_KEY.inc(10)));
+	}
+	
+	@Test
+	public void testIsWithinOutOfRange() {
+		assertFalse(NodeKey.MAX_KEY.isWithin(NodeKey.MIN_KEY, NodeKey.MIN_KEY.inc(20)));
+	}
+	
+	@Test
+	public void testIsWithinTwoFileds() {
+		assertTrue(NodeKey.MIN_KEY.inc(38).isWithin(NodeKey.MIN_KEY.inc(1), NodeKey.MIN_KEY.inc(257)));
+	}
+	
+	@Test
+	public void testIsWithinWrapAround() {
+		assertTrue(NodeKey.MAX_KEY.isWithin(NodeKey.MIN_KEY.inc(20), NodeKey.MIN_KEY));
 	}
 
 }

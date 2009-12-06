@@ -7,6 +7,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 import decentchat.api.DeCentInstance;
+import decentchat.api.Status;
 
 public class ClientMain {
 
@@ -25,7 +26,6 @@ public class ClientMain {
 		}
 		logger.info("Created the decentInstance");
 		while(true) {
-			
 		}
 	}
 

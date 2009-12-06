@@ -9,6 +9,9 @@ public class Hasher {
 	public final static int HASH_LENGTH_IN_BYTES = 40;
 	public final static String HASH_ALGORITHM = "SHA-1";
 
+	public final static byte[] MIN_HASH = generateHash((byte)0);
+	public final static byte[] MAX_HASH = generateHash((byte)-1);
+
 	/**
 	 * Hashes the given input string using the hash
 	 * algorithm specified by HASH_LENGTH_IN_BYTES.

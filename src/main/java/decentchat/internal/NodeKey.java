@@ -55,12 +55,9 @@ public class NodeKey implements Comparable<NodeKey>, Serializable {
 	 */
 	private int[] normalize(byte[] hash) {
 		int[] normalized_hash = new int[hash.length];
+		final int MOD = 256;
 		for (int i = 0; i < hash.length; ++i) {
-			if (hash[i] < 0) {
-				normalized_hash[i] = hash[i] + 256;
-			} else {
-				normalized_hash[i] = hash[i];
-			}
+			normalized_hash[i] = (hash[i]+MOD)%MOD;
 		}
 		return normalized_hash;
 	}

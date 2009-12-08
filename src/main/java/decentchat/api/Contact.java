@@ -1,13 +1,10 @@
 package decentchat.api;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-
-public interface Contact extends Remote {
+public interface Contact {
 	
-	public String getPubKey() throws RemoteException;
-	public Status getStatus() throws RemoteException;
-	public String getStatusMessage() throws RemoteException;
-	public boolean message(String message) throws RemoteException;
+	public String getPubKey();
+	public Status getStatus();
+	public String getStatusMessage();
+	public void message(String message);
 	
 }

@@ -36,5 +36,4 @@ public interface ProtocolInterface extends Remote {
 	 * @return The current Away/Online message.
 	 */
 	public String getAwayMessage() throws RemoteException;
-
 }

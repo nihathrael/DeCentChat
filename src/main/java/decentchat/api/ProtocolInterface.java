@@ -1,10 +1,11 @@
 package decentchat.api;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 public interface ProtocolInterface extends Remote {
 
-	public boolean message(String message);
+	public boolean message(String message) throws RemoteException;
 
 	/**
 	 * Authorize with the other client to verify our IP This has to be done
@@ -19,21 +20,21 @@ public interface ProtocolInterface extends Remote {
 	 *            saying we are.
 	 */
 	// TODO Witch data type should pubkey have?
-	public boolean authorize(String pubkey, String encryptedIP);
+	public boolean authorize(String pubkey, String encryptedIP) throws RemoteException;
 
-	public void notifyOnline();
-	public void notifyOffline();
+	public void notifyOnline() throws RemoteException;
+	public void notifyOffline() throws RemoteException;
 	
 	/** 
 	 * Sets our {@link Status} at the client. 
 	 * @param status {@link Status} we want to set.
 	 */
-	public void setStatus(Status status);
+	public void setStatus(Status status) throws RemoteException;
 	
 	/**
 	 * Use this to retrieve the current Away/Online Message.
 	 * @return The current Away/Online message.
 	 */
-	public String getAwayMessage();
+	public String getAwayMessage() throws RemoteException;
 
 }

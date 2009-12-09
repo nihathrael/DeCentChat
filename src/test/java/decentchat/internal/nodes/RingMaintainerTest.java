@@ -3,6 +3,7 @@ package decentchat.internal.nodes;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import decentchat.internal.Hasher;
 import decentchat.internal.NodeKey;
 
 import org.junit.*;
@@ -63,6 +64,14 @@ public class RingMaintainerTest {
 		assertEquals(6, fingers.size());
 		for (int i = 0; i < 6; ++i) {
 			assertEquals(expected_fingers[i], fingers.get(i).getKey().getHash()[0]);
+		}
+		byte[] hash = Hasher.generateHash((byte)0);
+		byte[] lookup = {8,9,63,52,56};
+		byte[] expected_lookup = {8,14,1,56,56};
+		for (int i = 0; i < lookup.length; ++i) {
+			hash[0] = lookup[i];
+			Node node = nodes[1].findSuccessor(new NodeKey(hash));
+			assertEquals(expected_lookup[i], node.getKey().getHash()[0]);
 		}
 	}
 

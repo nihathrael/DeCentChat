@@ -57,7 +57,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
 	    wanted = wanted.inc(1);
 	    if (wanted == key) {
 	        return new Pair<Node, Boolean>(this, true);
-	    } else if (wanted.isWithin(key, successor.getKey())) {
+	    } else if (wanted.isWithin(key.inc(1), successor.getKey())) {
 	        return new Pair<Node, Boolean>(successor, true);
 	    } else {
 	        return new Pair<Node, Boolean>(closestPrecedingNode(wanted), false);

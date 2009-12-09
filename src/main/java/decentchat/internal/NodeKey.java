@@ -1,54 +1,72 @@
 package decentchat.internal;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Arrays;
 
 public class NodeKey implements Comparable<NodeKey>, Serializable {
 
 	private static final long serialVersionUID = -8633504133195223816L;
-	
-	public static final NodeKey MIN_KEY = new NodeKey(Hasher.generateHash(Byte.MIN_VALUE));
-	public static final NodeKey MAX_KEY = new NodeKey(Hasher.generateHash(Byte.MAX_VALUE));
-	
+
+	public static final NodeKey MIN_KEY = new NodeKey(Hasher.MIN_HASH);
+	public static final NodeKey MAX_KEY = new NodeKey(Hasher.MAX_HASH);
+
 	private byte[] hash;
-	
+
 	public NodeKey(byte[] hash) {
 		this.hash = hash;
 	}
 
 	/**
-	 * Returns a new NodeKey whose hash is bigger
-	 * than the current one.
-	 * @param amount How much to add to the current key.
+	 * Returns a new NodeKey whose hash is bigger than the current one.
+	 * @param amount How much to add to the current key. Must be positive.
 	 * @return The NodeKey that is bigger than the current one.
 	 */
 	public NodeKey inc(long amount) {
-		byte[] next = Arrays.copyOf(hash, hash.length);
-	    byte carry = 0;
-	    byte ptr = 0;
-	    while (amount > 0 || carry > 0) {
-	        if (ptr == Hasher.HASH_LENGTH_IN_BYTES)
-	            break;
-	        short val = (short) (next[ptr] + (amount & 0xFF) + carry);
-	        if (val > 255) {
-	            carry = 1;
-	            next[ptr] = (byte) (val & 0xFF);
-	        } else {
-	            carry = 0;
-	            next[ptr] = (byte) val;
-	        }
-	        amount = amount >> 8;
-	        ++ptr;
-	    }
-		return new NodeKey(next);
+		byte[] inced_key = Arrays.copyOf(hash, hash.length);
+		int[] normalized_hash = normalize(hash);
+		byte carry = 0;
+		int ptr = 0;
+		while (amount > 0 || carry > 0) {
+			if (ptr == Hasher.HASH_LENGTH_IN_BYTES)
+				break;
+			int val = (int) (normalized_hash[ptr] + (amount & 0xFF) + carry);
+			if (val > 255) {
+				carry = 1;
+				val &= 0xFF;
+			} else {
+				carry = 0;
+			}
+			if (val > 127) {
+				val -= 256;
+			}
+			inced_key[ptr] = (byte) (val);
+			amount = amount >> 8;
+			++ptr;
+		}
+		return new NodeKey(inced_key);
+	}
+	
+	/**
+	 * Returns a normalized version of the given hash,
+	 * i.e. the values [0, ..., 127, -128, ..., -1]
+	 * will be transformed to [0, ..., 255].
+	 * @param hash The hash to normalize.
+	 * @return The normalized hash.
+	 */
+	private int[] normalize(byte[] hash) {
+		int[] normalized_hash = new int[hash.length];
+		final int MOD = 256;
+		for (int i = 0; i < hash.length; ++i) {
+			normalized_hash[i] = (hash[i]+MOD)%MOD;
+		}
+		return normalized_hash;
 	}
 
 	/**
-	 * Returns true if this key lies between (and including)
-	 * the two given nodes.
+	 * Returns true if this key lies between (and including) the two given nodes.
 	 * @param first The first node in the range.
 	 * @param last The last node in the range.
+	 * @return Whether or not this node is in the given Range.
 	 */
 	public boolean isWithin(NodeKey first, NodeKey last) {
 		if (first.compareTo(last) > 0) {
@@ -61,11 +79,15 @@ public class NodeKey implements Comparable<NodeKey>, Serializable {
 
 	@Override
 	public int compareTo(NodeKey o) {
-	    for (int i = hash.length-1; i >= 0; --i) {
-	        if (this.hash[i] > o.hash[i]) return 1;
-	        else if (this.hash[i] < o.hash[i]) return -1;
-	    }
-	    return 0;
+		int[] this_hash = normalize(hash);
+		int[] o_hash = normalize(o.hash);
+		for (int i = hash.length - 1; i >= 0; --i) {
+			if (this_hash[i] > o_hash[i])
+				return 1;
+			else if (this_hash[i] < o_hash[i])
+				return -1;
+		}
+		return 0;
 	}
 
 	@Override
@@ -89,9 +111,13 @@ public class NodeKey implements Comparable<NodeKey>, Serializable {
 			return false;
 		return true;
 	}
-	
+
 	public String toString() {
-	    return new BigInteger(hash).toString(16);
+		String result = "";
+		for (int i = 0; i < hash.length; i++) {
+			result += Integer.toString((hash[i] & 0xff) + 0x100, 16).substring(1);
+		}
+		return result;
 	}
 
 }

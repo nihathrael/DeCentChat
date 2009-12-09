@@ -1,6 +1,8 @@
 package decentchat.internal.nodes;
 
 import java.rmi.RemoteException;
+import java.util.List;
+
 import decentchat.internal.NodeKey;
 
 import org.junit.*;
@@ -36,14 +38,31 @@ public class RingMaintainerTest {
 	
 	@Test
 	public void testStabilize() {
+		stabilizeNodes();		
+		for (int i = 1; i < nodes.length; ++i) {
+			assertEquals("Successor of " + nodes[i-1] + "is wrong", nodes[i], nodes[i-1].getSuccessor());
+		}
+	}
+
+	private void stabilizeNodes() {
 		for (int i = 0; i < 10; ++i) {
 			for (int k = 0; k < nodes.length; ++k) {
 				maintainers[k].stabilize();
 			}
 		}
-		
-		for (int i = 1; i < nodes.length; ++i) {
-			assertEquals("Successor of " + nodes[i-1] + "is wrong", nodes[i], nodes[i-1].getSuccessor());
+	}
+	
+	@Test
+	public void testFixFingers() throws RemoteException {
+		stabilizeNodes();
+		for (int i = 0; i < 6; ++i) {
+			maintainers[1].fixFingers();
+		}
+		byte[] expected_fingers = {14,14,14,21,32,42};
+		List<Node> fingers = nodes[1].getFingers();
+		assertEquals(6, fingers.size());
+		for (int i = 0; i < 6; ++i) {
+			assertEquals(expected_fingers[i], fingers.get(i).getKey().getHash()[0]);
 		}
 	}
 

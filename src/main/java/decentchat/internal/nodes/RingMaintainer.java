@@ -55,7 +55,11 @@ public class RingMaintainer extends Thread {
 		        last_fixed_finger = 0;
 		    }
 		    NodeKey hash = node.getKey().inc((long) Math.pow(2, last_fixed_finger));
-			node.getFingers().set(last_fixed_finger, node.findSuccessor(hash));
+		    if (node.getFingers().size() <= last_fixed_finger) {
+		    	node.getFingers().add(node.findSuccessor(hash));
+		    } else {
+		    	node.getFingers().set(last_fixed_finger, node.findSuccessor(hash));
+		    }
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

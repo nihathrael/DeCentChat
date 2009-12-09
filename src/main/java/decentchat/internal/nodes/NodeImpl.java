@@ -54,8 +54,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
 
 	@Override
 	public Pair<Node, Boolean> findCloserNode(NodeKey wanted) throws RemoteException {
-	    wanted = wanted.inc(1);
-	    if (wanted == key) {
+	    if (wanted == key.inc(1)) {
 	        return new Pair<Node, Boolean>(this, true);
 	    } else if (wanted.isWithin(key.inc(1), successor.getKey())) {
 	        return new Pair<Node, Boolean>(successor, true);

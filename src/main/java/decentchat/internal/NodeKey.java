@@ -22,8 +22,8 @@ public class NodeKey implements Comparable<NodeKey>, Serializable {
 	 * @return The NodeKey that is bigger than the current one.
 	 */
 	public NodeKey inc(long amount) {
-		byte[] inced_key = Arrays.copyOf(hash, hash.length);
-		int[] normalized_hash = normalize(hash);
+		byte[] inced_key = Arrays.copyOf(getHash(), getHash().length);
+		int[] normalized_hash = normalize(getHash());
 		byte carry = 0;
 		int ptr = 0;
 		while (amount > 0 || carry > 0) {
@@ -79,9 +79,9 @@ public class NodeKey implements Comparable<NodeKey>, Serializable {
 
 	@Override
 	public int compareTo(NodeKey o) {
-		int[] this_hash = normalize(hash);
-		int[] o_hash = normalize(o.hash);
-		for (int i = hash.length - 1; i >= 0; --i) {
+		int[] this_hash = normalize(getHash());
+		int[] o_hash = normalize(o.getHash());
+		for (int i = getHash().length - 1; i >= 0; --i) {
 			if (this_hash[i] > o_hash[i])
 				return 1;
 			else if (this_hash[i] < o_hash[i])
@@ -94,7 +94,7 @@ public class NodeKey implements Comparable<NodeKey>, Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + Arrays.hashCode(hash);
+		result = prime * result + Arrays.hashCode(getHash());
 		return result;
 	}
 
@@ -107,17 +107,21 @@ public class NodeKey implements Comparable<NodeKey>, Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		NodeKey other = (NodeKey) obj;
-		if (!Arrays.equals(hash, other.hash))
+		if (!Arrays.equals(getHash(), other.getHash()))
 			return false;
 		return true;
 	}
 
 	public String toString() {
 		String result = "";
-		for (int i = 0; i < hash.length; i++) {
-			result += Integer.toString((hash[i] & 0xff) + 0x100, 16).substring(1);
+		for (int i = 0; i < getHash().length; i++) {
+			result += Integer.toString((getHash()[i] & 0xff) + 0x100, 16).substring(1);
 		}
 		return result;
+	}
+
+	public byte[] getHash() {
+		return hash;
 	}
 
 }

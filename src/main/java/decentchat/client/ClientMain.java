@@ -7,7 +7,6 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 import decentchat.api.DeCentInstance;
-import decentchat.api.Status;
 
 public class ClientMain {
 

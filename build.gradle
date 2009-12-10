@@ -2,7 +2,7 @@ usePlugin 'java'
 usePlugin 'eclipse'
 
 version = "0.1"
-defaultTasks "jar"
+defaultTasks "test jar"
 
 repositories {
 	mavenCentral()

@@ -1,6 +1,7 @@
 package decentchat.internal.nodes;
 
 import java.rmi.RemoteException;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -16,6 +17,9 @@ public class RingMaintainer extends Thread {
 	private NodeImpl node;
 	private int last_fixed_finger;
 	private boolean stillRunning;
+
+	public static int MAX_SUCCESSOR_COUNT = 10;
+	public static int MAX_FINGER_COUNT = 31;
 	
 	public void abort() {
 		stillRunning = false;
@@ -51,7 +55,7 @@ public class RingMaintainer extends Thread {
 	public void fixFingers() {
 	    try {
 			last_fixed_finger += 1;
-		    if (last_fixed_finger >= NodeImpl.MAX_FINGER_COUNT) {
+		    if (last_fixed_finger >= RingMaintainer.MAX_FINGER_COUNT) {
 		        last_fixed_finger = 0;
 		    }
 		    NodeKey hash = node.getKey().inc((long) Math.pow(2, last_fixed_finger));
@@ -66,16 +70,30 @@ public class RingMaintainer extends Thread {
 		}
 	}
 	
+	public List<Integer> shorten(List<Node> in) {
+		List<Integer> ret = new LinkedList<Integer>();
+		for (Node n: in) {
+			try {
+				ret.add((int)n.getKey().getHash()[0]);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return ret;
+	}
+	
 	public void fixSuccessors() {
-	    List<Node> succs;
+	    List<Node> succs = new LinkedList<Node>();
 		try {
-			succs = node.getSuccessor().getSuccessors();
-		    succs.add(0, node.getSuccessor());
-		    if (succs.size() > NodeImpl.MAX_SUCCESSOR_COUNT) {
-		    	succs = succs.subList(0, NodeImpl.MAX_SUCCESSOR_COUNT-1);
+		    succs.add(node.getSuccessor());
+			for (Node n: node.getSuccessor().getSuccessors()) {
+				succs.add(n);
+			}
+		    if (succs.size() > RingMaintainer.MAX_SUCCESSOR_COUNT) {
+		    	succs = succs.subList(0, RingMaintainer.MAX_SUCCESSOR_COUNT);
 		    }
-		    node.getSuccessors().clear();
-		    node.getSuccessors().addAll(succs);
+		    node.setSuccessors(succs);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -14,24 +14,30 @@ public class ProtocolImpl extends UnicastRemoteObject implements ProtocolInterfa
 	
 	static Logger logger = Logger.getLogger(ProtocolImpl.class);
 	
-	protected ProtocolImpl() throws RemoteException {
+	protected ProtocolImpl(DeCentInstance deCentInstance) throws RemoteException {
 		super();
+		this.decentInstance = deCentInstance;
 	}
 
-	private Map<String, Contact> contacts = new HashMap<String, Contact>(); 
+	private Map<String, Contact> contacts = new HashMap<String, Contact>();
+	private final DeCentInstance decentInstance;
 
 	@Override
 	public boolean authorize(String pubkey, String encryptedIP)
 			throws RemoteException {
 		boolean ret = false;
 		//
-		// TODO Check ip by comparing the encrypted ip
+		// TODO Check IP by comparing the encrypted IP
 		// TODO Add decryption here
 		String decryptedIP = encryptedIP;
-		Contact contact = getCurrentContact();
+		Contact contact = this.decentInstance.getContact(pubkey);
 		try {
-			if(decryptedIP == ProtocolImpl.getClientHost()) {
+			if(contact != null && decryptedIP == ProtocolImpl.getClientHost()) {
+				// Contact is now correctly signed on
 				contact.setIP(decryptedIP);
+				contact.setStatus(Status.ONLINE);
+				// Add contact to the interface list.
+				this.contacts.put(decryptedIP, contact);
 				ret = true;
 			}
 		} catch (ServerNotActiveException e) {
@@ -67,14 +73,7 @@ public class ProtocolImpl extends UnicastRemoteObject implements ProtocolInterfa
 		Contact currentContact = getCurrentContact();
 		if(currentContact != null) {
 			currentContact.setStatus(Status.OFFLINE);
-		} 
-	}
-
-	@Override
-	public void notifyOnline() throws RemoteException {
-		Contact currentContact = getCurrentContact();
-		if(currentContact != null) {
-			currentContact.setStatus(Status.ONLINE);
+			this.contacts.remove(currentContact);
 		} 
 	}
 

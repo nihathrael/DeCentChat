@@ -22,8 +22,6 @@ public interface ProtocolInterface extends Remote {
 	public boolean authorize(String pubkey, String encryptedIP)
 			throws RemoteException;
 
-	public void notifyOnline() throws RemoteException;
-
 	public void notifyOffline() throws RemoteException;
 
 	/**

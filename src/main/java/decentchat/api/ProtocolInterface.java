@@ -2,7 +2,18 @@ package decentchat.api;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
 
+/**
+ * The {@link ProtocolInterface} is used by libDeCent to communicate
+ * with other contacts. It is used to sign on/off at a peer contact, 
+ * send messages and change the current status. It can be used via
+ * RMI and is usually available as "protoInterface" via the other
+ * contacts RMI {@link Registry}.
+ * 
+ * @author nihathrael
+ *
+ */
 public interface ProtocolInterface extends Remote {
 
 	public boolean message(String message) throws RemoteException;

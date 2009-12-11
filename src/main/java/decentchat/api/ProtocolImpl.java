@@ -14,13 +14,14 @@ public class ProtocolImpl extends UnicastRemoteObject implements ProtocolInterfa
 	
 	static Logger logger = Logger.getLogger(ProtocolImpl.class);
 	
+	private Map<String, Contact> contacts = new HashMap<String, Contact>();
+	private final DeCentInstance decentInstance;
+	
 	protected ProtocolImpl(DeCentInstance deCentInstance) throws RemoteException {
 		super();
 		this.decentInstance = deCentInstance;
 	}
 
-	private Map<String, Contact> contacts = new HashMap<String, Contact>();
-	private final DeCentInstance decentInstance;
 
 	@Override
 	public boolean authorize(String pubkey, String encryptedIP)

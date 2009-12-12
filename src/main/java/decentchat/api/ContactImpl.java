@@ -7,6 +7,7 @@ public class ContactImpl implements Contact {
 	private Status status = null;
 	private String statusMessage = "";
 	private ContactEventHandler eventHandler;
+	private String ip = "";
 	
 	public ContactImpl(String pubkey, Status status, ContactEventHandler handler) {
 		this.status = status;
@@ -29,8 +30,9 @@ public class ContactImpl implements Contact {
 		this.eventHandler.onMessageReceived(message);
 	}
 
-	public void setStatus(Status status) {
-		this.status = status;
+	@Override
+	public void setStatus(Status newStatus) {
+		this.status = newStatus;
 		this.eventHandler.onStatusChanged();
 	}
 
@@ -42,6 +44,16 @@ public class ContactImpl implements Contact {
 	public void setStatusMessage(String statusMessage) {
 		this.statusMessage = statusMessage;
 		this.eventHandler.onStatusMessageChanged(statusMessage);
+	}
+
+	@Override
+	public String getIP() {
+		return this.ip;
+	}
+
+	@Override
+	public void setIP(String ip) {
+		this.ip = ip;
 	}
 
 }

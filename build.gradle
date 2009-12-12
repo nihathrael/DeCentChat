@@ -2,7 +2,7 @@ usePlugin 'java'
 usePlugin 'eclipse'
 
 version = "0.1"
-defaultTasks "jar"
+defaultTasks "test","jar"
 
 repositories {
 	mavenCentral()
@@ -24,10 +24,13 @@ dependencies {
 
 task rmic(dependsOn: compileJava) << {
 	String command = """rmic -classpath ${sourceSets.main.classesDir} -d ${sourceSets.main.classesDir} decentchat.internal.nodes.NodeImpl"""
+	String command2 = """rmic -classpath ${sourceSets.main.classesDir} -d ${sourceSets.main.classesDir} decentchat.api.ProtocolImpl"""
 	println command
 	String test = command.execute().text
 	println test
-	
+	println command2
+	test = command2.execute().text
+	println test
 }
 
 jar.dependsOn(rmic)

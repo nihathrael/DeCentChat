@@ -5,6 +5,8 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -22,6 +24,8 @@ public class DeCentInstance {
 	private Registry reg = null;
 	private NodeImpl localNode = null;
 	private RingMaintainer maintainer = null;
+	private Map<String, Contact> contacts = new HashMap<String, Contact>(10);
+	private ProtocolInterface protoInterface = null;
 
 	/**
 	 * The {@link DeCentInstance} is the main instance the client will be 
@@ -58,11 +62,29 @@ public class DeCentInstance {
 		return true;
 	}
 	
+	public void addContact(Contact c) {
+		this.contacts.put(c.getPubKey(), c);
+	}
+	
+	public void removeContact(Contact c) {
+		this.contacts.remove(c.getPubKey());
+	}
+	
+	public Contact getContact(String publicKey) {
+		if(this.contacts.containsKey(publicKey)) {
+			return this.contacts.get(publicKey);
+		} else {
+			logger.debug("No contact found with contact: " + publicKey);
+			return null;
+		}
+	}
+	
 	public boolean init(String hostname, int registry_port) {
 		this.ip = hostname;
 		this.port = registry_port;
 		createLocalRegistry(ip, registry_port);
 		createLocalNode(NodeKey.MIN_KEY, null);
+		createProtocolInterface();
 		return true;
 	}
 	
@@ -103,6 +125,19 @@ public class DeCentInstance {
 			maintainer = new RingMaintainer(localNode);
 			maintainer.start();
 			logger.debug("Started Maintainer successfully!");
+		} catch (RemoteException e) {
+			logger.error("Error creating localnode", e);
+		} catch (AlreadyBoundException e) {
+			logger.error("Error creating localnode", e);
+		}
+	}
+	
+	private void createProtocolInterface() {
+		try {
+			logger.debug("Creating protocol Interface");
+			protoInterface = new ProtocolImpl(this);
+			reg.bind("protointerface", protoInterface);
+			logger.debug("Protocol Interface successfully created.");
 		} catch (RemoteException e) {
 			logger.error("Error creating localnode", e);
 		} catch (AlreadyBoundException e) {

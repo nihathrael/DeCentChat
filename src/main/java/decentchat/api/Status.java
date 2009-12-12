@@ -1,5 +1,5 @@
 package decentchat.api;
 
 public enum Status {
-	ONLINE, AWAY, DND, INVISIBLE, IDLE;
+	ONLINE, AWAY, DND, INVISIBLE, IDLE, OFFLINE;
 }

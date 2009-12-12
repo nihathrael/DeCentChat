@@ -26,4 +26,14 @@ public interface ContactEventHandler {
 	 */
 	public void onStatusMessageChanged(String message);
 	
+	/**
+	 * Gets called when the contact goes online.
+	 */
+	public void onOnline();
+	
+	/**
+	 * Gets called when the contact goes offline.
+	 */
+	public void onOffline();
+	
 }

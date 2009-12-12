@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 
 import decentchat.exceptions.ContactNotFoundException;
 import decentchat.internal.ContactImpl;
-import decentchat.internal.remotes.Node;
 
 public class ContactManager implements Serializable {
 	
@@ -39,4 +38,5 @@ public class ContactManager implements Serializable {
 			return null;
 		}
 	}
+	
 }

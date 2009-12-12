@@ -2,6 +2,7 @@ package decentchat.internal.remotes;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
+import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 
 import org.apache.log4j.Logger;
@@ -17,10 +18,12 @@ public class PushInterfaceImpl extends UnicastRemoteObject implements PushInterf
 	static Logger logger = Logger.getLogger(PushInterfaceImpl.class);
 
 	private Registry registry;
+	private PullInterface pullInterface;
 	
-	public PushInterfaceImpl(Registry registry) throws RemoteException {
+	public PushInterfaceImpl(Registry registry, PullInterface pullInterface) throws RemoteException {
 		super();
 		this.registry = registry;
+		this.pullInterface = pullInterface;
 	}
 	
 	/**
@@ -35,14 +38,28 @@ public class PushInterfaceImpl extends UnicastRemoteObject implements PushInterf
 	 * calling node.
 	 */
 	private ContactImpl getContact() throws ContactNotFoundException {
-		assertAuthenticated();
+		if (!authenticate()) {
+			throw new ContactNotFoundException();
+		}
 		// TODO implement
 		return null;
 	}
 
-	private void assertAuthenticated() {
-		// TODO Auto-generated method stub
-		
+	private boolean authenticate() {
+		// TODO don't do this everytime
+		// TODO maybe there already is some java method for this?
+		int nonce = 0; // TODO generate real nonce
+		String message = pullInterface.authenticate(nonce);
+		// TODO decrypt message
+		try {
+			if (!message.equals(getClientHost() + "/" + nonce)) {
+				return false;
+			} else {
+				return true;
+			}
+		} catch (ServerNotActiveException e) {
+			return false;
+		}
 	}
 
 	@Override

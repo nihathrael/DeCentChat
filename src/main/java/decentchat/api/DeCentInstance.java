@@ -147,10 +147,10 @@ public class DeCentInstance {
 	private void createProtocolInterfaces() {
 		try {
 			logger.debug("Creating protocol Interface");
-			pushInterface = new PushInterfaceImpl(registry);
-			registry.bind("push", pushInterface);
 			pullInterface = new PullInterfaceImpl(this);
 			registry.bind("pull", pullInterface);
+			pushInterface = new PushInterfaceImpl(registry, pullInterface);
+			registry.bind("push", pushInterface);
 			logger.debug("Protocol Interface successfully created.");
 		} catch (RemoteException e) {
 			logger.error("Error creating localnode", e);

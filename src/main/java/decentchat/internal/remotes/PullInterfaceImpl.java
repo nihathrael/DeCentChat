@@ -13,7 +13,7 @@ public class PullInterfaceImpl extends UnicastRemoteObject implements PullInterf
 	private static final long serialVersionUID = 470475401844483791L;
 	private DeCentInstance instance;
 
-	protected PullInterfaceImpl(DeCentInstance instance) throws RemoteException {
+	public PullInterfaceImpl(DeCentInstance instance) throws RemoteException {
 		super();
 		this.instance = instance;
 	}

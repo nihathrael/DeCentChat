@@ -12,7 +12,7 @@ public class PushInterfaceImpl extends UnicastRemoteObject implements PushInterf
 
 	private static final long serialVersionUID = -4017058237863632726L;
 
-	protected PushInterfaceImpl() throws RemoteException {
+	public PushInterfaceImpl() throws RemoteException {
 		super();
 	}
 

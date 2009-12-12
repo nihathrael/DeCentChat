@@ -1,5 +1,6 @@
 package decentchat.api;
 
+
 import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
@@ -14,8 +15,10 @@ import decentchat.internal.NodeKey;
 import decentchat.internal.RingMaintainer;
 import decentchat.internal.remotes.Node;
 import decentchat.internal.remotes.NodeImpl;
-import decentchat.internal.remotes.ProtocolImpl;
-import decentchat.internal.remotes.ProtocolInterface;
+import decentchat.internal.remotes.PullInterface;
+import decentchat.internal.remotes.PullInterfaceImpl;
+import decentchat.internal.remotes.PushInterface;
+import decentchat.internal.remotes.PushInterfaceImpl;
 
 public class DeCentInstance {
 	
@@ -27,7 +30,8 @@ public class DeCentInstance {
 	private NodeImpl localNode;
 	private RingMaintainer maintainer;
 	private ContactManager contactManager;
-	private ProtocolInterface protoInterface = null;
+	private PushInterface pushInterface;
+	private PullInterface pullInterface;
 	private PrivateKey privkey;
 	private PublicKey pubkey;
 
@@ -144,8 +148,10 @@ public class DeCentInstance {
 	private void createProtocolInterface() {
 		try {
 			logger.debug("Creating protocol Interface");
-			protoInterface = new ProtocolImpl(this);
-			reg.bind("protointerface", protoInterface);
+			pushInterface = new PushInterfaceImpl();
+			reg.bind("push", pushInterface);
+			pullInterface = new PullInterfaceImpl(this);
+			reg.bind("pull", pullInterface);
 			logger.debug("Protocol Interface successfully created.");
 		} catch (RemoteException e) {
 			logger.error("Error creating localnode", e);

@@ -36,7 +36,7 @@ public class ProtocolImpl extends UnicastRemoteObject implements ProtocolInterfa
 		// TODO Check IP by comparing the encrypted IP
 		// TODO Add decryption here
 		String decryptedIP = encryptedIP;
-		Contact contact = this.decentInstance.getContact(pubkey);
+		Contact contact = this.decentInstance.getContactManager().getContact(pubkey);
 		try {
 			if(contact != null && decryptedIP == ProtocolImpl.getClientHost()) {
 				// Contact is now correctly signed on

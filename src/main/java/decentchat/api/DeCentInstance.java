@@ -5,9 +5,6 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.security.PublicKey;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -24,10 +21,19 @@ public class DeCentInstance {
 	
 	private String ip;
 	private int port;
-	private Registry reg = null;
-	private NodeImpl localNode = null;
-	private RingMaintainer maintainer = null;
-	private Map<PublicKey, Contact> contacts = new HashMap<PublicKey, Contact>(10);
+	private Registry reg;
+	private NodeImpl localNode;
+	private RingMaintainer maintainer;
+	private ContactManager contactManager;
+
+	public ContactManager getContactManager() {
+		return contactManager;
+	}
+
+	public void setContactManager(ContactManager contactManager) {
+		this.contactManager = contactManager;
+	}
+
 	private ProtocolInterface protoInterface = null;
 
 	/**
@@ -36,7 +42,8 @@ public class DeCentInstance {
 	 * public interface.
 	 *   
 	 */
-	public DeCentInstance() {		
+	public DeCentInstance() {
+		contactManager  = new ContactManager();
 	}
 	
 	public int getPort() {
@@ -63,23 +70,6 @@ public class DeCentInstance {
 		}
 		createLocalNode(NodeKey.MAX_KEY, bootstrapNode);
 		return true;
-	}
-	
-	public void addContact(Contact c) {
-		this.contacts.put(c.getPublicKey(), c);
-	}
-	
-	public void removeContact(Contact c) {
-		this.contacts.remove(c.getPublicKey());
-	}
-	
-	public Contact getContact(PublicKey pubkey) {
-		if(this.contacts.containsKey(pubkey)) {
-			return this.contacts.get(pubkey);
-		} else {
-			logger.debug("No contact found with contact: " + pubkey);
-			return null;
-		}
 	}
 	
 	public boolean init(String hostname, int registry_port) {

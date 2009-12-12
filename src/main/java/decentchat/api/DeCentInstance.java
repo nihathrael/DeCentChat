@@ -5,6 +5,8 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 import org.apache.log4j.Logger;
 
@@ -25,6 +27,20 @@ public class DeCentInstance {
 	private NodeImpl localNode;
 	private RingMaintainer maintainer;
 	private ContactManager contactManager;
+	private ProtocolInterface protoInterface = null;
+	private PrivateKey privkey;
+	private PublicKey pubkey;
+
+	/**
+	 * The {@link DeCentInstance} is the main instance the client will be 
+	 * using when using the DeCentChat protocol. It defines the main
+	 * public interface.   
+	 */
+	public DeCentInstance(PrivateKey privkey, PublicKey pubkey) {
+		contactManager  = new ContactManager();
+		this.privkey = privkey;
+		this.pubkey = pubkey;
+	}
 
 	public ContactManager getContactManager() {
 		return contactManager;
@@ -33,17 +49,17 @@ public class DeCentInstance {
 	public void setContactManager(ContactManager contactManager) {
 		this.contactManager = contactManager;
 	}
+	
+	public PrivateKey getPrivateKey() {
+		return privkey;
+	}
 
-	private ProtocolInterface protoInterface = null;
-
-	/**
-	 * The {@link DeCentInstance} is the main instance the client will be 
-	 * using when using the DeCentChat protocol. It defines the main
-	 * public interface.
-	 *   
-	 */
-	public DeCentInstance() {
-		contactManager  = new ContactManager();
+	public PublicKey getPublicKey() {
+		return pubkey;
+	}
+	
+	public String getIP() {
+		return ip;
 	}
 	
 	public int getPort() {

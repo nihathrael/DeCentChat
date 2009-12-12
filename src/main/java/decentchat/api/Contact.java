@@ -1,8 +1,10 @@
 package decentchat.api;
 
+import java.security.PublicKey;
+
 public interface Contact {
 	
-	public String getPubKey();
+	public PublicKey getPublicKey();
 	public Status getStatus();
 	public void setStatus(Status newStatus);
 	public String getStatusMessage();

@@ -1,5 +1,7 @@
 package decentchat.internal;
 
+import java.security.PublicKey;
+
 import decentchat.api.Contact;
 import decentchat.api.ContactEventHandler;
 import decentchat.api.Status;
@@ -7,21 +9,21 @@ import decentchat.api.Status;
 
 public class ContactImpl implements Contact {
 	
-	private String pubKey = null;
+	private PublicKey publicKey = null;
 	private Status status = null;
 	private String statusMessage = "";
 	private ContactEventHandler eventHandler;
 	private String ip = "";
 	
-	public ContactImpl(String pubkey, Status status, ContactEventHandler handler) {
+	public ContactImpl(PublicKey pubkey, Status status, ContactEventHandler handler) {
 		this.status = status;
-		this.pubKey = pubkey;
+		this.publicKey = pubkey;
 		this.eventHandler = handler;
 	}
 
 	@Override
-	public String getPubKey() {
-		return pubKey;
+	public PublicKey getPublicKey() {
+		return publicKey;
 	}
 
 	@Override

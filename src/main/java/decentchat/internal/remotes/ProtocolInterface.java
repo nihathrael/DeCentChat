@@ -3,6 +3,7 @@ package decentchat.internal.remotes;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
+import java.security.PublicKey;
 
 import decentchat.api.Status;
 
@@ -31,8 +32,7 @@ public interface ProtocolInterface extends Remote {
 	 *            The IP encrypted with our private key. The client can use this
 	 *            to verify that we are who we are saying we are.
 	 */
-	// TODO Witch data type should pubkey have?
-	public boolean authorize(String pubkey, String encryptedIP)
+	public boolean authorize(PublicKey pubkey, String encryptedIP)
 			throws RemoteException;
 
 	public void notifyOffline() throws RemoteException;

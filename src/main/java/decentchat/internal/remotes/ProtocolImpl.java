@@ -3,6 +3,7 @@ package decentchat.internal.remotes;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ public class ProtocolImpl extends UnicastRemoteObject implements ProtocolInterfa
 
 
 	@Override
-	public boolean authorize(String pubkey, String encryptedIP)
+	public boolean authorize(PublicKey pubkey, String encryptedIP)
 			throws RemoteException {
 		boolean ret = false;
 		//

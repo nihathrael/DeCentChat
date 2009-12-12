@@ -5,6 +5,7 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class DeCentInstance {
 	private Registry reg = null;
 	private NodeImpl localNode = null;
 	private RingMaintainer maintainer = null;
-	private Map<String, Contact> contacts = new HashMap<String, Contact>(10);
+	private Map<PublicKey, Contact> contacts = new HashMap<PublicKey, Contact>(10);
 	private ProtocolInterface protoInterface = null;
 
 	/**
@@ -65,18 +66,18 @@ public class DeCentInstance {
 	}
 	
 	public void addContact(Contact c) {
-		this.contacts.put(c.getPubKey(), c);
+		this.contacts.put(c.getPublicKey(), c);
 	}
 	
 	public void removeContact(Contact c) {
-		this.contacts.remove(c.getPubKey());
+		this.contacts.remove(c.getPublicKey());
 	}
 	
-	public Contact getContact(String publicKey) {
-		if(this.contacts.containsKey(publicKey)) {
-			return this.contacts.get(publicKey);
+	public Contact getContact(PublicKey pubkey) {
+		if(this.contacts.containsKey(pubkey)) {
+			return this.contacts.get(pubkey);
 		} else {
-			logger.debug("No contact found with contact: " + publicKey);
+			logger.debug("No contact found with contact: " + pubkey);
 			return null;
 		}
 	}

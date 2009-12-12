@@ -1,10 +1,13 @@
 package decentchat.internal;
 
+import java.rmi.RemoteException;
 import java.security.PublicKey;
 
 import decentchat.api.Contact;
 import decentchat.api.ContactEventHandler;
 import decentchat.api.Status;
+import decentchat.exceptions.ContactOfflineException;
+import decentchat.internal.remotes.PushInterface;
 
 
 public class ContactImpl implements Contact {
@@ -13,7 +16,7 @@ public class ContactImpl implements Contact {
 	private Status status;
 	private String statusMessage;
 	private ContactEventHandler eventHandler;
-	private String ip;
+	private PushInterface pushInterface;
 	
 	public ContactImpl(PublicKey pubkey, Status status) {
 		this.status = status;
@@ -21,7 +24,7 @@ public class ContactImpl implements Contact {
 		eventHandler = null;
 		status = null;
 		statusMessage = null;
-		ip = null;
+		pushInterface = null;
 	}
 	
 	@Override
@@ -45,22 +48,21 @@ public class ContactImpl implements Contact {
 	}
 
 	@Override
-	public void sendMessage(String message) {
-		this.eventHandler.onMessageReceived(message);
+	public void sendMessage(String message) throws ContactOfflineException {
+		if (pushInterface == null) {
+			throw new ContactOfflineException();
+		} else {
+			try {
+				pushInterface.sendMessage(message);
+			} catch (RemoteException e) {
+				throw new ContactOfflineException();
+			}
+		}
 	}
 
 	@Override
 	public String getStatusMessage() {
 		return statusMessage;
-	}
-
-	@Override
-	public String getIP() {
-		return this.ip;
-	}
-
-	public void setIP(String ip) {
-		this.ip = ip;
 	}
 
 	/**
@@ -106,6 +108,37 @@ public class ContactImpl implements Contact {
 			@Override
 			public void run() {
 				eventHandler.onStatusChanged(newStatus);
+			}
+		}).start();
+	}
+	
+	/**
+	 * Stores the given {@link PushInterface} and notifies the
+	 * {@link ContactEventHandler} that this contact is now
+	 * online.
+	 * @param pushInterface The {@link PushInterface} of this
+	 * contact.
+	 */
+	public void setOnline(PushInterface pushInterface) {
+		this.pushInterface = pushInterface;
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				eventHandler.onOnline();
+			}
+		}).start();
+	}
+
+	/**
+	 * Notifies the {@link ContactEventHandler} that this contact
+	 * is now offline.
+	 */
+	public void setOffline() {
+		pushInterface = null;
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				eventHandler.onOffline();
 			}
 		}).start();
 	}

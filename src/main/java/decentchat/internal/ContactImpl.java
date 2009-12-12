@@ -9,16 +9,19 @@ import decentchat.api.Status;
 
 public class ContactImpl implements Contact {
 	
-	private PublicKey publicKey = null;
-	private Status status = null;
-	private String statusMessage = "";
+	private PublicKey publicKey;
+	private Status status;
+	private String statusMessage;
 	private ContactEventHandler eventHandler;
-	private String ip = "";
+	private String ip;
 	
-	public ContactImpl(PublicKey pubkey, Status status, ContactEventHandler handler) {
+	public ContactImpl(PublicKey pubkey, Status status) {
 		this.status = status;
 		this.publicKey = pubkey;
-		this.eventHandler = handler;
+		eventHandler = null;
+		status = null;
+		statusMessage = null;
+		ip = null;
 	}
 	
 	@Override

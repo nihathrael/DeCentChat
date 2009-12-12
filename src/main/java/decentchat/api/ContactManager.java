@@ -7,6 +7,10 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import decentchat.exceptions.ContactNotFoundException;
+import decentchat.internal.ContactImpl;
+import decentchat.internal.remotes.Node;
+
 public class ContactManager implements Serializable {
 	
 	private static final long serialVersionUID = 8151741692244991273L;
@@ -15,12 +19,12 @@ public class ContactManager implements Serializable {
 	
 	static Logger logger = Logger.getLogger(ContactManager.class);
 
-	public ContactManager() {
-		contacts = new HashMap<PublicKey, Contact>(10);
+	ContactManager() {
+		contacts = new HashMap<PublicKey, Contact>();
 	}
 
-	public void addContact(Contact c) {
-		contacts.put(c.getPublicKey(), c);
+	public void addContact(PublicKey pubkey) throws ContactNotFoundException {
+		contacts.put(pubkey, new ContactImpl(pubkey, null));
 	}
 
 	public void removeContact(Contact c) {
@@ -28,7 +32,7 @@ public class ContactManager implements Serializable {
 	}
 
 	public Contact getContact(PublicKey pubkey) {
-		if(contacts.containsKey(pubkey)) {
+		if (contacts.containsKey(pubkey)) {
 			return contacts.get(pubkey);
 		} else {
 			logger.debug("No contact found with contact: " + pubkey);

@@ -41,7 +41,7 @@ public class DeCentInstance {
 	 * public interface.   
 	 */
 	public DeCentInstance(PrivateKey privkey, PublicKey pubkey) {
-		contactManager  = new ContactManager();
+		contactManager = new ContactManager();
 		this.privkey = privkey;
 		this.pubkey = pubkey;
 	}

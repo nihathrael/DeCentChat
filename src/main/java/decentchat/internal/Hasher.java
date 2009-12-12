@@ -2,6 +2,7 @@ package decentchat.internal;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.util.Arrays;
 
 public class Hasher {
@@ -39,6 +40,11 @@ public class Hasher {
 		byte[] hash = new byte[HASH_LENGTH_IN_BYTES];
 		Arrays.fill(hash, value);
 		return hash;
+	}
+
+	public static byte[] fromPublicKey(PublicKey pubkey) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

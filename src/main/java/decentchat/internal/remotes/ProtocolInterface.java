@@ -22,7 +22,7 @@ public interface ProtocolInterface extends Remote {
 	public boolean message(String message) throws RemoteException;
 
 	/**
-	 * Authorize with the other client to verify our IP This has to be done
+	 * Authenticate with the other client to verify our IP This has to be done
 	 * before {@link ProtocolInterface#notifyOnline(String)} or
 	 * {@link ProtocolInterface#notifyOffline(String)} is called.
 	 * 
@@ -32,7 +32,7 @@ public interface ProtocolInterface extends Remote {
 	 *            The IP encrypted with our private key. The client can use this
 	 *            to verify that we are who we are saying we are.
 	 */
-	public boolean authorize(PublicKey pubkey, String encryptedIP)
+	public boolean authenticate(PublicKey pubkey, String encryptedIP)
 			throws RemoteException;
 
 	public void notifyOffline() throws RemoteException;

@@ -29,7 +29,7 @@ public class ProtocolImpl extends UnicastRemoteObject implements ProtocolInterfa
 
 
 	@Override
-	public boolean authorize(PublicKey pubkey, String encryptedIP)
+	public boolean authenticate(PublicKey pubkey, String encryptedIP)
 			throws RemoteException {
 		boolean ret = false;
 		//

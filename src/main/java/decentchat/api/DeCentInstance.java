@@ -11,9 +11,11 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import decentchat.internal.NodeKey;
-import decentchat.internal.nodes.Node;
-import decentchat.internal.nodes.NodeImpl;
-import decentchat.internal.nodes.RingMaintainer;
+import decentchat.internal.RingMaintainer;
+import decentchat.internal.remotes.Node;
+import decentchat.internal.remotes.NodeImpl;
+import decentchat.internal.remotes.ProtocolImpl;
+import decentchat.internal.remotes.ProtocolInterface;
 
 public class DeCentInstance {
 	

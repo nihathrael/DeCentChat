@@ -1,4 +1,4 @@
-package decentchat.internal.nodes;
+package decentchat.internal;
 
 import java.rmi.RemoteException;
 import java.util.LinkedList;
@@ -6,7 +6,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import decentchat.internal.NodeKey;
+import decentchat.internal.remotes.Node;
+import decentchat.internal.remotes.NodeImpl;
 
 public class RingMaintainer extends Thread {
 	

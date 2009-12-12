@@ -1,4 +1,4 @@
-package decentchat.internal;
+package decentchat.util;
 
 import java.io.Serializable;
 

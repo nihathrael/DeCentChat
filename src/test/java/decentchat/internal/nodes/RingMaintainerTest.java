@@ -5,6 +5,9 @@ import java.util.List;
 
 import decentchat.internal.Hasher;
 import decentchat.internal.NodeKey;
+import decentchat.internal.RingMaintainer;
+import decentchat.internal.remotes.Node;
+import decentchat.internal.remotes.NodeImpl;
 
 import org.junit.*;
 import static org.junit.Assert.*;

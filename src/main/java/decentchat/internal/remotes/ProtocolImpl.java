@@ -1,4 +1,4 @@
-package decentchat.api;
+package decentchat.internal.remotes;
 
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+
+import decentchat.api.Contact;
+import decentchat.api.DeCentInstance;
+import decentchat.api.Status;
 
 public class ProtocolImpl extends UnicastRemoteObject implements ProtocolInterface {
 	
@@ -17,7 +21,7 @@ public class ProtocolImpl extends UnicastRemoteObject implements ProtocolInterfa
 	private Map<String, Contact> contacts = new HashMap<String, Contact>();
 	private final DeCentInstance decentInstance;
 	
-	protected ProtocolImpl(DeCentInstance deCentInstance) throws RemoteException {
+	public ProtocolImpl(DeCentInstance deCentInstance) throws RemoteException {
 		super();
 		this.decentInstance = deCentInstance;
 	}

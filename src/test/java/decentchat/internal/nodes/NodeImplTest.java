@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import org.junit.*;
 
 import decentchat.internal.NodeKey;
+import decentchat.internal.remotes.NodeImpl;
 import static org.junit.Assert.*;
 
 public class NodeImplTest {

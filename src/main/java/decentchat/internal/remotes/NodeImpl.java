@@ -1,4 +1,4 @@
-package decentchat.internal.nodes;
+package decentchat.internal.remotes;
 
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
@@ -9,7 +9,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import decentchat.internal.NodeKey;
-import decentchat.internal.Pair;
+import decentchat.util.Pair;
 
 public class NodeImpl extends UnicastRemoteObject implements Node {
 

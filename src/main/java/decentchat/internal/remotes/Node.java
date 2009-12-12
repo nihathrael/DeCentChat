@@ -1,11 +1,11 @@
-package decentchat.internal.nodes;
+package decentchat.internal.remotes;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 
 import decentchat.internal.NodeKey;
-import decentchat.internal.Pair;
+import decentchat.util.Pair;
 
 public interface Node extends Remote {
 	

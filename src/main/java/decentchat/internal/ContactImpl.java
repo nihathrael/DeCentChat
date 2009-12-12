@@ -1,4 +1,8 @@
-package decentchat.api;
+package decentchat.internal;
+
+import decentchat.api.Contact;
+import decentchat.api.ContactEventHandler;
+import decentchat.api.Status;
 
 
 public class ContactImpl implements Contact {

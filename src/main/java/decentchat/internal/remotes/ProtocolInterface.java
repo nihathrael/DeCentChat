@@ -1,8 +1,10 @@
-package decentchat.api;
+package decentchat.internal.remotes;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
+
+import decentchat.api.Status;
 
 /**
  * The {@link ProtocolInterface} is used by libDeCent to communicate

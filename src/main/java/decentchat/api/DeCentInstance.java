@@ -27,7 +27,7 @@ public class DeCentInstance {
 	
 	private String ip;
 	private int port;
-	private Registry reg;
+	private Registry registry;
 	private NodeImpl localNode;
 	private RingMaintainer maintainer;
 	private ContactManager contactManager;
@@ -85,7 +85,7 @@ public class DeCentInstance {
 			logger.error("Problem connecting", e);
 			throw new BoostrappingFailedException();
 		}
-		if (ip == null || reg == null) {
+		if (ip == null || registry == null) {
 			logger.error("Problem fetching ip: " + ip);
 			throw new BoostrappingFailedException();
 		}
@@ -111,7 +111,7 @@ public class DeCentInstance {
 		System.setProperty("java.rmi.server.hostname", hostname);
 		try {
 			// Start the registry
-			reg = LocateRegistry.createRegistry(port);
+			registry = LocateRegistry.createRegistry(port);
 		} catch (RemoteException e) {
 			logger.error("Problem creating the Registry!", e);
 		}
@@ -132,7 +132,7 @@ public class DeCentInstance {
 			} else {
 				localNode = new NodeImpl(NodeKey.MIN_KEY, bootstrapNode);
 			}
-			reg.bind("node", localNode);
+			registry.bind("node", localNode);
 			logger.debug("Starting Maintainer...");
 			maintainer = new RingMaintainer(localNode);
 			maintainer.start();
@@ -147,10 +147,10 @@ public class DeCentInstance {
 	private void createProtocolInterfaces() {
 		try {
 			logger.debug("Creating protocol Interface");
-			pushInterface = new PushInterfaceImpl();
-			reg.bind("push", pushInterface);
+			pushInterface = new PushInterfaceImpl(registry);
+			registry.bind("push", pushInterface);
 			pullInterface = new PullInterfaceImpl(this);
-			reg.bind("pull", pullInterface);
+			registry.bind("pull", pullInterface);
 			logger.debug("Protocol Interface successfully created.");
 		} catch (RemoteException e) {
 			logger.error("Error creating localnode", e);

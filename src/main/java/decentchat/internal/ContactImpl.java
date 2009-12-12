@@ -31,7 +31,6 @@ public class ContactImpl implements Contact {
 		this.eventHandler = eventHandler;
 	}
 
-
 	@Override
 	public PublicKey getPublicKey() {
 		return publicKey;
@@ -66,19 +65,46 @@ public class ContactImpl implements Contact {
 	 * to the event handler. 
 	 * @param message The message received.
 	 */
-	public void receiveMessage(String message) {
-		// TODO Auto-generated method stub
-		
+	public void receiveMessage(final String message) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				eventHandler.onMessageReceived(message);
+			}
+		}).start();
 	}
 	
-	public void setStatusMessage(String statusMessage) {
+	/**
+	 * Starts a thread that notifies the {@link ContactEventHandler}
+	 * of this contact of a new status message.
+	 * @param statusMessage The new status message of this
+	 * contact.
+	 */
+	public void setStatusMessage(final String statusMessage) {
 		this.statusMessage = statusMessage;
-		this.eventHandler.onStatusMessageChanged(statusMessage);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				eventHandler.onStatusMessageChanged(statusMessage);
+			}
+		}).start();
 	}
 
-	public void setStatus(Status newStatus) {
+	
+	/**
+	 * Starts a thread that notifies the {@link ContactEventHandler}
+	 * of this contact of a new {@link Status}.
+	 * @param statusMessage The new {@link Status} of this
+	 * contact.
+	 */
+	public void setStatus(final Status newStatus) {
 		this.status = newStatus;
-		this.eventHandler.onStatusChanged();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				eventHandler.onStatusChanged(newStatus);
+			}
+		}).start();
 	}
 
 }

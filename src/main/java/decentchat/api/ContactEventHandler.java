@@ -15,9 +15,10 @@ public interface ContactEventHandler {
 	public void onMessageReceived(String message);
 	
 	/**
-	 * On status changed is called when the contact changes it's status.
+	 * This is called when the contact changes it's {@link Status}.
+	 * @param newStatus The new {@link Status} of the client.
 	 */
-	public void onStatusChanged();
+	public void onStatusChanged(Status newStatus);
 	
 	/**
 	 * {@link #onStatusMessageChanged(String)} is called when the contact 

@@ -1,4 +1,4 @@
-package decentchat.internal.nodes;
+package decentchat.internal;
 
 import java.rmi.RemoteException;
 import java.util.List;

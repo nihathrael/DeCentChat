@@ -20,6 +20,17 @@ public class ContactImpl implements Contact {
 		this.publicKey = pubkey;
 		this.eventHandler = handler;
 	}
+	
+	@Override
+	public ContactEventHandler getEventHandler() {
+		return eventHandler;
+	}
+
+	@Override
+	public void setEventHandler(ContactEventHandler eventHandler) {
+		this.eventHandler = eventHandler;
+	}
+
 
 	@Override
 	public PublicKey getPublicKey() {
@@ -37,19 +48,8 @@ public class ContactImpl implements Contact {
 	}
 
 	@Override
-	public void setStatus(Status newStatus) {
-		this.status = newStatus;
-		this.eventHandler.onStatusChanged();
-	}
-
-	@Override
 	public String getStatusMessage() {
 		return statusMessage;
-	}
-	
-	public void setStatusMessage(String statusMessage) {
-		this.statusMessage = statusMessage;
-		this.eventHandler.onStatusMessageChanged(statusMessage);
 	}
 
 	@Override
@@ -57,9 +57,28 @@ public class ContactImpl implements Contact {
 		return this.ip;
 	}
 
-	@Override
 	public void setIP(String ip) {
 		this.ip = ip;
+	}
+
+	/**
+	 * Receives a message and starts a thread to pass it
+	 * to the event handler. 
+	 * @param message The message received.
+	 */
+	public void receiveMessage(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void setStatusMessage(String statusMessage) {
+		this.statusMessage = statusMessage;
+		this.eventHandler.onStatusMessageChanged(statusMessage);
+	}
+
+	public void setStatus(Status newStatus) {
+		this.status = newStatus;
+		this.eventHandler.onStatusChanged();
 	}
 
 }

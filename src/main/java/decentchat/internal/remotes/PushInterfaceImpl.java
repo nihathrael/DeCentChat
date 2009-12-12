@@ -6,6 +6,7 @@ import java.rmi.server.UnicastRemoteObject;
 import org.apache.log4j.Logger;
 
 import decentchat.api.Status;
+import decentchat.internal.ContactImpl;
 
 public class PushInterfaceImpl extends UnicastRemoteObject implements PushInterface {
 
@@ -16,6 +17,10 @@ public class PushInterfaceImpl extends UnicastRemoteObject implements PushInterf
 	}
 
 	static Logger logger = Logger.getLogger(PushInterfaceImpl.class);
+	
+	private ContactImpl getContact() {
+		return null;
+	}
 
 	@Override
 	public void notifyOffline() throws RemoteException {
@@ -31,20 +36,17 @@ public class PushInterfaceImpl extends UnicastRemoteObject implements PushInterf
 
 	@Override
 	public void sendMessage(String message) throws RemoteException {
-		// TODO Auto-generated method stub
-
+		getContact().receiveMessage(message);
 	}
 
 	@Override
 	public void setStatus(Status status) throws RemoteException {
-		// TODO Auto-generated method stub
-
+		getContact().setStatus(status);
 	}
 
 	@Override
 	public void setStatusMessage(String message) throws RemoteException {
-		// TODO Auto-generated method stub
-
+		getContact().setStatusMessage(message);
 	}
 
 }

@@ -7,6 +7,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 import decentchat.api.DeCentInstance;
+import decentchat.exceptions.BoostrappingFailedException;
 
 public class ClientMain {
 
@@ -21,7 +22,12 @@ public class ClientMain {
 			decentInstance.init(ip, port); // We want to create a new network
 		} else {
 			// Join an existing network
-			decentInstance.init(bootstrapIP, bootstrapPort, port);
+			try {
+				decentInstance.init(bootstrapIP, bootstrapPort, port);
+			} catch (BoostrappingFailedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		logger.info("Created the decentInstance");
 		while(true) {

@@ -11,6 +11,7 @@ import java.security.PublicKey;
 
 import org.apache.log4j.Logger;
 
+import decentchat.exceptions.BoostrappingFailedException;
 import decentchat.internal.NodeKey;
 import decentchat.internal.RingMaintainer;
 import decentchat.internal.remotes.Node;
@@ -70,7 +71,7 @@ public class DeCentInstance {
 		return this.port;
 	}
 	
-	public boolean init(String bootstrap_ip, int bootstrap_port, int registry_port) {
+	public void init(String bootstrap_ip, int bootstrap_port, int registry_port) throws BoostrappingFailedException {
 		this.port = registry_port;
 		Node bootstrapNode = null;
 		try {
@@ -82,23 +83,21 @@ public class DeCentInstance {
 			createLocalRegistry(ip, registry_port);
 		} catch (Exception e) {
 			logger.error("Problem connecting", e);
-			return false;
+			throw new BoostrappingFailedException();
 		}
-		if(ip == null || reg == null) {
-			logger.error("Problem fetching ip:" + ip);
-			return false;
+		if (ip == null || reg == null) {
+			logger.error("Problem fetching ip: " + ip);
+			throw new BoostrappingFailedException();
 		}
 		createLocalNode(NodeKey.MAX_KEY, bootstrapNode);
-		return true;
 	}
 	
-	public boolean init(String hostname, int registry_port) {
+	public void init(String hostname, int registry_port) {
 		this.ip = hostname;
 		this.port = registry_port;
 		createLocalRegistry(ip, registry_port);
 		createLocalNode(NodeKey.MIN_KEY, null);
-		createProtocolInterface();
-		return true;
+		createProtocolInterfaces();
 	}
 	
 	/**
@@ -145,7 +144,7 @@ public class DeCentInstance {
 		}
 	}
 	
-	private void createProtocolInterface() {
+	private void createProtocolInterfaces() {
 		try {
 			logger.debug("Creating protocol Interface");
 			pushInterface = new PushInterfaceImpl();

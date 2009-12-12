@@ -16,7 +16,7 @@ public class ClientMain {
 
 	public ClientMain(String ip, int port, String bootstrapIP, int bootstrapPort) {
 		logger.info("Starting Client...");
-		decentInstance = new DeCentInstance();
+		decentInstance = new DeCentInstance(null, null);
 		if (ip != null) {
 			decentInstance.init(ip, port); // We want to create a new network
 		} else {

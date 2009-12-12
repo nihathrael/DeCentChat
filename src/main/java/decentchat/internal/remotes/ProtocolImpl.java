@@ -67,7 +67,7 @@ public class ProtocolImpl extends UnicastRemoteObject implements ProtocolInterfa
 	public boolean message(String message) throws RemoteException {
 		Contact currentContact = getCurrentContact();
 		if(currentContact != null) {
-			currentContact.message(message);
+			currentContact.sendMessage(message);
 			return true;
 		} else {
 			return false;

@@ -10,6 +10,6 @@ public interface Contact {
 	public String getStatusMessage();
 	public void setIP(String ip);
 	public String getIP();
-	public void message(String message);
+	public void sendMessage(String message);
 	
 }

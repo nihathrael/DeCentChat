@@ -32,7 +32,7 @@ public class ContactImpl implements Contact {
 	}
 
 	@Override
-	public void message(String message) {
+	public void sendMessage(String message) {
 		this.eventHandler.onMessageReceived(message);
 	}
 

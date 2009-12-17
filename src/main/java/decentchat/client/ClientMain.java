@@ -25,8 +25,7 @@ public class ClientMain {
 			try {
 				decentInstance.init(bootstrapIP, bootstrapPort, port);
 			} catch (BoostrappingFailedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Error connecting to bootstrap node: " + bootstrapIP, e);
 			}
 		}
 		logger.info("Created the decentInstance");

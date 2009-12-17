@@ -1,12 +1,16 @@
 package decentchat.internal.remotes;
 
+import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import decentchat.api.Contact;
 import decentchat.api.Status;
 import decentchat.exceptions.ContactNotFoundException;
 import decentchat.internal.ContactImpl;
@@ -19,6 +23,7 @@ public class PushInterfaceImpl extends UnicastRemoteObject implements PushInterf
 
 	private Registry registry;
 	private PullInterface pullInterface;
+	private Map<String, ContactImpl> contacts = new HashMap<String, ContactImpl>();  
 	
 	public PushInterfaceImpl(Registry registry, PullInterface pullInterface) throws RemoteException {
 		super();
@@ -41,6 +46,16 @@ public class PushInterfaceImpl extends UnicastRemoteObject implements PushInterf
 		if (!authenticate()) {
 			throw new ContactNotFoundException();
 		}
+		try {
+			String ip = getClientHost();
+			if(contacts.containsKey(ip)) {
+				return contacts.get(ip);
+			}
+			//Naming.lookup("rmi://" + ip +":"+port+ "/node");
+			
+		} catch (ServerNotActiveException e) {
+			e.printStackTrace();
+		}
 		// TODO implement
 		return null;
 	}
@@ -49,7 +64,7 @@ public class PushInterfaceImpl extends UnicastRemoteObject implements PushInterf
 		// TODO don't do this everytime
 		// TODO maybe there already is some java method for this?
 		int nonce = 0; // TODO generate real nonce
-		String message = pullInterface.authenticate(nonce);
+		String message = pullInterface.authenticate(nonce); // TODO This should be the pullinterface from the client instead!
 		// TODO decrypt message
 		try {
 			if (!message.equals(getClientHost() + "/" + nonce)) {
@@ -66,18 +81,24 @@ public class PushInterfaceImpl extends UnicastRemoteObject implements PushInterf
 	public void notifyOffline() throws RemoteException {
 		try {
 			getContact().setOffline();
+			contacts.remove(getClientHost());
 		} catch (ContactNotFoundException e) {
 			// We're not interested then.
+		} catch (ServerNotActiveException e) {
+			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public void notifyOnline() throws RemoteException {
+	public void notifyOnline(int port) throws RemoteException {
 		try {
+			// TODO Use port in the future
 			ContactImpl contact = getContact();
 			contact.setOnline(getPushInterfaceForContact(contact));
+			contacts.put(getClientHost(), contact);
 		} catch (ContactNotFoundException e) {
-			// We're not interested then.
+		} catch (ServerNotActiveException e) {
+			e.printStackTrace();
 		}
 	}
 

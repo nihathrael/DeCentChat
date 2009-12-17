@@ -18,10 +18,9 @@ public class ContactImpl implements Contact {
 	private ContactEventHandler eventHandler;
 	private PushInterface pushInterface;
 	
-	public ContactImpl(PublicKey pubkey, Status status) {
-		this.status = status;
+	public ContactImpl(PublicKey pubkey, ContactEventHandler eventHandler) {
 		this.publicKey = pubkey;
-		eventHandler = null;
+		this.eventHandler = eventHandler;
 		status = null;
 		statusMessage = null;
 		pushInterface = null;

@@ -180,8 +180,20 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 	public byte[] authenticate(long nonce) throws RemoteException {
 		String message = instance.getIP() + "/" + nonce;
 		PrivateKey privkey = instance.getPrivateKey();
-		// TODO encrypt message with private key
-		return message.getBytes();
+		Cipher cipher = Encryption.getCipher();
+		try {
+			cipher.init(Cipher.ENCRYPT_MODE, privkey);
+			return cipher.doFinal(message.getBytes());
+		} catch (InvalidKeyException e) {
+			logger.debug("Authentication encryption failed", e);
+			return null;
+		} catch (IllegalBlockSizeException e) {
+			logger.debug("Authentication encryption failed", e);
+			return null;
+		} catch (BadPaddingException e) {
+			logger.debug("Authentication encryption failed", e);
+			return null;
+		}
 	}
 
 	@Override

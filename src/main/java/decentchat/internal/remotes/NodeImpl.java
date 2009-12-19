@@ -166,4 +166,8 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
 		this.successors = successors;
 	}
 
+	public void setPredecessor(Node predecessor) {
+		this.predecessor = predecessor;
+	}
+
 }

@@ -36,26 +36,36 @@ public class RingMaintainer extends Thread {
 		NodeKey hash = node.getKey().inc(1);
 	    Node x = null;
 	    Node succ = null;
+	    NodeKey succKey = null;
+	    NodeKey xKey = null;
 		try {
 			succ = node.getSuccessor();
+			succKey = succ.getKey();
 			x = succ.getPredecessor();
 		} catch (RemoteException e) {
 			switchToNextSuccessor(node);
 			return;
 		}
 		try {
-		    if (x != null &&
-		    		// we're either pointing to ourselves
-		    		((succ.getKey().compareTo(node.getKey()) == 0 &&x.getKey().compareTo(node.getKey()) != 0)
-		    		// or there is a node between us and node.getSuccessor()
-		            || (x.getKey().isWithin(hash, succ.getKey())))) {
-		        node.setSuccessor(x);
-		        logger.debug("New successor is " + x);
-		        node.getSuccessors().add(0, x);
-		    }
+			xKey = x.getKey();
+		} catch (RemoteException e) {
+			if (succ.equals(node)) {
+				node.setPredecessor(null);
+			}
+		}
+	    if (x != null &&
+	    		// we're either pointing to ourselves
+	    		((succKey.compareTo(node.getKey()) == 0 && xKey.compareTo(node.getKey()) != 0)
+	    		// or there is a node between us and node.getSuccessor()
+	            || (xKey.isWithin(hash, succKey)))) {
+	        node.setSuccessor(x);
+	        logger.debug("New successor is " + x);
+	        node.getSuccessors().add(0, x);
+	    }
+		try {
 		    node.getSuccessor().notify(node);
 		} catch (RemoteException e) {
-			
+			logger.debug("Stabilize did not work. Waiting for next run.");
 		}
 	}
 	

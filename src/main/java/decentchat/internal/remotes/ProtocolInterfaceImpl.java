@@ -3,10 +3,16 @@ package decentchat.internal.remotes;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.InvalidKeyException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 
 import org.apache.log4j.Logger;
 
@@ -14,6 +20,7 @@ import decentchat.api.DeCentInstance;
 import decentchat.api.Status;
 import decentchat.exceptions.ContactNotFoundException;
 import decentchat.internal.ContactImpl;
+import decentchat.util.Encryption;
 
 public class ProtocolInterfaceImpl extends UnicastRemoteObject implements ProtocolInterface {
 
@@ -41,13 +48,14 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 	 * calling node.
 	 */
 	private ContactImpl getContact() throws ContactNotFoundException {
-		if (!isAuthenticated()) {
-			throw new ContactNotFoundException();
-		}
 		try {
 			String ip = getClientHost();
 			if(contacts.containsKey(ip)) {
-				return contacts.get(ip);
+				ContactImpl contact = contacts.get(ip);
+				if (!isAuthenticated(contact.getProtocolInterface())) {
+					throw new ContactNotFoundException();
+				}
+				return contact;
 			}
 		} catch (ServerNotActiveException e) {
 			e.printStackTrace();
@@ -61,7 +69,7 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 	 * calling node.
 	 */
 	private ContactImpl getContact(ProtocolInterface prot) throws ContactNotFoundException {
-		if (!isAuthenticated()) {
+		if (!isAuthenticated(prot)) {
 			throw new ContactNotFoundException();
 		}
 		PublicKey key = null;
@@ -81,25 +89,35 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 	 * @return <code>true</code> on successful authentication
 	 * and <code>false</code> on a failure (of any kind).
 	 */
-	private boolean isAuthenticated() {
+	private boolean isAuthenticated(ProtocolInterface protocolInterface) {
 		// TODO don't do this everytime
-		// TODO maybe there already is some java method for this?
-		int nonce = 0; // TODO generate real nonce
-		String message = "";
+		String ip;
 		try {
-			message = authenticate(nonce);
-		} catch (RemoteException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		// TODO decrypt message
-		try {
-			if (!message.equals(getClientHost() + "/" + nonce)) {
-				return false;
-			} else {
-				return true;
-			}
+			ip = getClientHost();
 		} catch (ServerNotActiveException e) {
+			logger.debug("getClientHost failed in isAuthenticated", e);
+			return false;
+		}
+		long nonce = new SecureRandom().nextLong();
+		byte[] message = null;
+		try {
+			message = protocolInterface.authenticate(nonce);
+			PublicKey pubkey = protocolInterface.getPubKey();
+			Cipher cipher = Encryption.getCipher();
+			cipher.init(Cipher.DECRYPT_MODE, pubkey);
+			message = cipher.doFinal(message);
+			return new String(message).equals(ip + "/" + nonce);
+		} catch (RemoteException e) {
+			logger.debug("Authentication failed for " + ip, e);
+			return false;
+		} catch (InvalidKeyException e) {
+			logger.debug("Authentication failed for " + ip, e);
+			return false;
+		} catch (IllegalBlockSizeException e) {
+			logger.debug("Authentication failed for " + ip, e);
+			return false;
+		} catch (BadPaddingException e) {
+			logger.debug("Authentication failed for " + ip, e);
 			return false;
 		}
 	}
@@ -159,11 +177,11 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 	}
 
 	@Override
-	public String authenticate(int nonce) throws RemoteException {
+	public byte[] authenticate(long nonce) throws RemoteException {
 		String message = instance.getIP() + "/" + nonce;
 		PrivateKey privkey = instance.getPrivateKey();
 		// TODO encrypt message with private key
-		return message;
+		return message.getBytes();
 	}
 
 	@Override

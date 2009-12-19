@@ -17,13 +17,17 @@ public class ContactImpl implements Contact {
 	private String statusMessage;
 	private ContactEventHandler eventHandler;
 	private ProtocolInterface protocolInterface;
-	
+
 	public ContactImpl(PublicKey pubkey, ContactEventHandler eventHandler) {
 		this.publicKey = pubkey;
 		this.eventHandler = eventHandler;
 		status = null;
 		statusMessage = null;
 		protocolInterface = null;
+	}
+	
+	public ProtocolInterface getProtocolInterface() {
+		return protocolInterface;
 	}
 	
 	@Override

@@ -1,6 +1,5 @@
 package decentchat.internal.remotes;
 
-import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.rmi.server.ServerNotActiveException;
@@ -10,7 +9,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import decentchat.api.Contact;
 import decentchat.api.Status;
 import decentchat.exceptions.ContactNotFoundException;
 import decentchat.internal.ContactImpl;
@@ -64,7 +62,13 @@ public class PushInterfaceImpl extends UnicastRemoteObject implements PushInterf
 		// TODO don't do this everytime
 		// TODO maybe there already is some java method for this?
 		int nonce = 0; // TODO generate real nonce
-		String message = pullInterface.authenticate(nonce); // TODO This should be the pullinterface from the client instead!
+		String message = "";
+		try {
+			message = pullInterface.authenticate(nonce);
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} // TODO This should be the pullinterface from the client instead!
 		// TODO decrypt message
 		try {
 			if (!message.equals(getClientHost() + "/" + nonce)) {

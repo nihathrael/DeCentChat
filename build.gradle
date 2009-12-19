@@ -23,14 +23,13 @@ dependencies {
 
 
 task rmic(dependsOn: compileJava) << {
-	String command = """rmic -classpath ${sourceSets.main.classesDir} -d ${sourceSets.main.classesDir} decentchat.internal.nodes.NodeImpl"""
-	String command2 = """rmic -classpath ${sourceSets.main.classesDir} -d ${sourceSets.main.classesDir} decentchat.api.ProtocolImpl"""
-	println command
-	String test = command.execute().text
-	println test
-	println command2
-	test = command2.execute().text
-	println test
+	String[] classes = ['decentchat.internal.remotes.NodeImpl', 'decentchat.internal.remotes.PullInterfaceImpl', 'decentchat.internal.remotes.PushInterfaceImpl']
+	for(classe in classes) {
+		String command = """rmic -classpath ${sourceSets.main.classesDir} -d ${sourceSets.main.classesDir} ${classe}"""
+		println command
+		String test = command.execute().text
+		print test
+	}
 }
 
 jar.dependsOn(rmic)

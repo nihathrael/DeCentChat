@@ -1,7 +1,6 @@
 package decentchat.internal.remotes;
 
 import java.rmi.RemoteException;
-import java.rmi.registry.Registry;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
@@ -19,13 +18,11 @@ public class PushInterfaceImpl extends UnicastRemoteObject implements PushInterf
 
 	static Logger logger = Logger.getLogger(PushInterfaceImpl.class);
 
-	private Registry registry;
 	private PullInterface pullInterface;
 	private Map<String, ContactImpl> contacts = new HashMap<String, ContactImpl>();  
 	
-	public PushInterfaceImpl(Registry registry, PullInterface pullInterface) throws RemoteException {
+	public PushInterfaceImpl(PullInterface pullInterface) throws RemoteException {
 		super();
-		this.registry = registry;
 		this.pullInterface = pullInterface;
 	}
 	

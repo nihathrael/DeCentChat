@@ -23,7 +23,7 @@ public class Hasher {
 	 * @param input
 	 * @return
 	 */
-	public static byte[] generateHash(String input) {
+	public static byte[] generateHash(byte[] input) {
 		MessageDigest md = null;
 		try {
 			md = MessageDigest.getInstance(HASH_ALGORITHM);
@@ -31,7 +31,7 @@ public class Hasher {
 			logger.fatal("Unsupported encryption algorithm: " + HASH_ALGORITHM, e);
 			throw new RuntimeException("Unsupported encryption algorithm: " + HASH_ALGORITHM, e);
 		}
-	    md.update(input.getBytes(), 0, input.length());
+	    md.update(input, 0, input.length);
 	    return md.digest();
 	}
 
@@ -46,9 +46,8 @@ public class Hasher {
 		return hash;
 	}
 
-	public static byte[] fromPublicKey(PublicKey pubkey) {
-		// TODO Auto-generated method stub
-		return null;
+	public static byte[] generateHash(PublicKey pubkey) {
+		return generateHash(pubkey.getEncoded());
 	}
 	
 }

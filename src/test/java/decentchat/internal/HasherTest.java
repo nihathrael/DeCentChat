@@ -7,7 +7,7 @@ public class HasherTest {
 
 	@Test
 	public void testHash() {
-		byte[] hash = Hasher.generateHash("foobar");
+		byte[] hash = Hasher.generateHash("foobar".getBytes());
 		assertEquals("8843d7f92416211de9ebb963ff4ce28125932878",
 				new NodeKey(hash).toString());
 	}

@@ -22,8 +22,8 @@ public class ContactManager implements Serializable {
 		contacts = new HashMap<PublicKey, Contact>();
 	}
 
-	public void addContact(PublicKey pubkey) throws ContactNotFoundException {
-		contacts.put(pubkey, new ContactImpl(pubkey, null));
+	public void addContact(PublicKey pubkey, ContactEventHandler eventHandler) throws ContactNotFoundException {
+		contacts.put(pubkey, new ContactImpl(pubkey, eventHandler));
 	}
 
 	public void removeContact(Contact c) {

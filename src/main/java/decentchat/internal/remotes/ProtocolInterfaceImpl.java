@@ -4,6 +4,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.PrivateKey;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -19,6 +21,7 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 	static Logger logger = Logger.getLogger(ProtocolInterfaceImpl.class);
 
 	private DeCentInstance instance;
+	private Map<String, ContactImpl> contacts = new HashMap<String, ContactImpl>();
 	
 	public ProtocolInterfaceImpl(DeCentInstance instance) throws RemoteException {
 		super();
@@ -40,6 +43,16 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 		if (!authenticate()) {
 			throw new ContactNotFoundException();
 		}
+		try {
+			String ip = getClientHost();
+			if(contacts.containsKey(ip)) {
+				return contacts.get(ip);
+			}
+			//Naming.lookup("rmi://" + ip +":"+port+ "/node");
+			
+		} catch (ServerNotActiveException e) {
+			e.printStackTrace();
+		}
 		// TODO implement
 		return null;
 	}
@@ -48,7 +61,8 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 		// TODO don't do this everytime
 		// TODO maybe there already is some java method for this?
 		int nonce = 0; // TODO generate real nonce
-		String message = authenticate(nonce);
+		String message = "";
+		message = authenticate(nonce);
 		// TODO decrypt message
 		try {
 			if (!message.equals(getClientHost() + "/" + nonce)) {
@@ -65,18 +79,24 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 	public void notifyOffline() throws RemoteException {
 		try {
 			getContact().setOffline();
+			contacts.remove(getClientHost());
 		} catch (ContactNotFoundException e) {
 			// We're not interested then.
+		} catch (ServerNotActiveException e) {
+			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public void notifyOnline() throws RemoteException {
+	public void notifyOnline(int port) throws RemoteException {
 		try {
+			// TODO Use port in the future
 			ContactImpl contact = getContact();
 			contact.setOnline(getProtocolInterfaceForContact(contact));
+			contacts.put(getClientHost(), contact);
 		} catch (ContactNotFoundException e) {
-			// We're not interested then.
+		} catch (ServerNotActiveException e) {
+			e.printStackTrace();
 		}
 	}
 

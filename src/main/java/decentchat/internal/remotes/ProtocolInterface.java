@@ -28,9 +28,10 @@ public interface ProtocolInterface extends Remote {
 	
 	/**
 	 * Tells a contact that we are now online.
+	 * @param port TODO
 	 * @throws RemoteException
 	 */
-	public void notifyOnline() throws RemoteException;
+	public void notifyOnline(int port) throws RemoteException;
 
 	/**
 	 * Tells a contact that our {@link Status} has changed.

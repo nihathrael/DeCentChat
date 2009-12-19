@@ -33,9 +33,6 @@ public class ClientMain {
 		}
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		BasicConfigurator.configure();
 		//Parse arguments

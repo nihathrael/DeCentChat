@@ -38,29 +38,25 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 	
 	/**
 	 * Looks up the contact that belongs to the
-	 * calling node. It does so in a two step
-	 * process:
-	 * 1. It tries to find it by IP
-	 * 2. If that fails, it gets it's protocol
-	 *    interface and from there it's public key
-	 *    and tries to find it by that.
+	 * calling node by its IP.
 	 * @return The contact associated with the
 	 * calling node.
 	 */
 	private ContactImpl getContact() throws ContactNotFoundException {
 		try {
 			String ip = getClientHost();
-			if(contacts.containsKey(ip)) {
+			if (contacts.containsKey(ip)) {
 				ContactImpl contact = contacts.get(ip);
 				if (!isAuthenticated(contact.getProtocolInterface())) {
 					throw new ContactNotFoundException();
 				}
 				return contact;
+			} else {
+				throw new ContactNotFoundException();
 			}
 		} catch (ServerNotActiveException e) {
-			e.printStackTrace();
+			throw new ContactNotFoundException();
 		}
-		throw new ContactNotFoundException();
 	}
 	
 	/**
@@ -78,9 +74,7 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 		} catch (RemoteException e) {
 			throw new ContactNotFoundException();
 		}
-		ContactImpl ret = null;
-		ret = (ContactImpl) instance.getContactManager().getContact(key);
-		return ret;
+		return (ContactImpl) instance.getContactManager().getContact(key);
 	}
 
 	/**
@@ -130,7 +124,7 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 		} catch (ContactNotFoundException e) {
 			// We're not interested then.
 		} catch (ServerNotActiveException e) {
-			e.printStackTrace();
+			// We're not interested then either.
 		}
 	}
 
@@ -138,13 +132,12 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 	public void notifyOnline(ProtocolInterface protocolInterface) throws RemoteException {
 		try {
 			ContactImpl contact = getContact(protocolInterface);
-			if(contact != null) {
-				contact.setOnline(protocolInterface);
-				contacts.put(getClientHost(), contact);
-			}
+			contacts.put(getClientHost(), contact);
+			contact.setOnline(protocolInterface);
 		} catch (ContactNotFoundException e) {
+			// We don't care then.
 		} catch (ServerNotActiveException e) {
-			e.printStackTrace();
+			// We don't care then either.
 		}
 	}
 

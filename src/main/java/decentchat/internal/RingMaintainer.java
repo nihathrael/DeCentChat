@@ -37,7 +37,6 @@ public class RingMaintainer extends Thread {
 	    Node x = null;
 	    Node succ = null;
 	    NodeKey succKey = null;
-	    NodeKey xKey = null;
 		try {
 			succ = node.getSuccessor();
 			succKey = succ.getKey();
@@ -47,21 +46,22 @@ public class RingMaintainer extends Thread {
 			return;
 		}
 		try {
-			xKey = x.getKey();
+		    if (x != null &&
+		    		// we're either pointing to ourselves
+		    		((succKey.compareTo(node.getKey()) == 0 && x.getKey().compareTo(node.getKey()) != 0)
+		    		// or there is a node between us and node.getSuccessor()
+		            || (x.getKey().isWithin(hash, succKey)))) {
+		        node.setSuccessor(x);
+		        logger.debug("New successor is " + x);
+		        node.getSuccessors().add(0, x);
+		    }
 		} catch (RemoteException e) {
+			// x failed --> ring might be empty
 			if (succ.equals(node)) {
 				node.setPredecessor(null);
 			}
+			return;
 		}
-	    if (x != null &&
-	    		// we're either pointing to ourselves
-	    		((succKey.compareTo(node.getKey()) == 0 && xKey.compareTo(node.getKey()) != 0)
-	    		// or there is a node between us and node.getSuccessor()
-	            || (xKey.isWithin(hash, succKey)))) {
-	        node.setSuccessor(x);
-	        logger.debug("New successor is " + x);
-	        node.getSuccessors().add(0, x);
-	    }
 		try {
 		    node.getSuccessor().notify(node);
 		} catch (RemoteException e) {

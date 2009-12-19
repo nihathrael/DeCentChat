@@ -40,7 +40,7 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 	 * calling node.
 	 */
 	private ContactImpl getContact() throws ContactNotFoundException {
-		if (!authenticate()) {
+		if (!isAuthenticated()) {
 			throw new ContactNotFoundException();
 		}
 		try {
@@ -57,7 +57,13 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 		return null;
 	}
 
-	private boolean authenticate() {
+	/**
+	 * Performs the authentication challenge on the currently
+	 * connected client. 
+	 * @return <code>true</code> on successful authentication
+	 * and <code>false</code> on a failure (of any kind).
+	 */
+	private boolean isAuthenticated() {
 		// TODO don't do this everytime
 		// TODO maybe there already is some java method for this?
 		int nonce = 0; // TODO generate real nonce

@@ -23,7 +23,7 @@ dependencies {
 
 
 task rmic(dependsOn: compileJava) << {
-	String[] classes = ['decentchat.internal.remotes.NodeImpl', 'decentchat.internal.remotes.PullInterfaceImpl', 'decentchat.internal.remotes.PushInterfaceImpl']
+	String[] classes = ['decentchat.internal.remotes.NodeImpl', 'decentchat.internal.remotes.ProtocolInterfaceImpl']
 	for(classe in classes) {
 		String command = """rmic -classpath ${sourceSets.main.classesDir} -d ${sourceSets.main.classesDir} ${classe}"""
 		println command

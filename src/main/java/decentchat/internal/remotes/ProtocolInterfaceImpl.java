@@ -62,7 +62,12 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 		// TODO maybe there already is some java method for this?
 		int nonce = 0; // TODO generate real nonce
 		String message = "";
-		message = authenticate(nonce);
+		try {
+			message = authenticate(nonce);
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		// TODO decrypt message
 		try {
 			if (!message.equals(getClientHost() + "/" + nonce)) {
@@ -134,7 +139,7 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 	}
 
 	@Override
-	public String authenticate(int nonce) {
+	public String authenticate(int nonce) throws RemoteException {
 		String message = instance.getIP() + "/" + nonce;
 		PrivateKey privkey = instance.getPrivateKey();
 		// TODO encrypt message with private key

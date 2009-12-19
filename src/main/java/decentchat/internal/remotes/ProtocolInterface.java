@@ -60,6 +60,6 @@ public interface ProtocolInterface extends Remote {
 	 * process. Prevents replay attacks.
 	 * @return The result of the encryption.
 	 */
-	public String authenticate(int nonce);
+	public String authenticate(int nonce) throws RemoteException;
 
 }

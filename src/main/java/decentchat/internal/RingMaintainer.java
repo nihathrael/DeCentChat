@@ -91,8 +91,8 @@ public class RingMaintainer extends Thread {
 			for (Node n: node.getSuccessor().getSuccessors()) {
 				succs.add(n);
 			}
-		    if (succs.size() > RingMaintainer.MAX_SUCCESSOR_COUNT) {
-		    	succs = succs.subList(0, RingMaintainer.MAX_SUCCESSOR_COUNT);
+		    while (succs.size() > RingMaintainer.MAX_SUCCESSOR_COUNT) {
+		    	succs.remove(succs.size()-1);
 		    }
 		    node.setSuccessors(succs);
 		} catch (RemoteException e) {

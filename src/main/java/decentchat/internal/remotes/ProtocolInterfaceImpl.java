@@ -61,7 +61,7 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 	 * calling node.
 	 */
 	private ContactImpl getContact(ProtocolInterface prot) throws ContactNotFoundException {
-		if (!authenticate()) {
+		if (!isAuthenticated()) {
 			throw new ContactNotFoundException();
 		}
 		PublicKey key = null;

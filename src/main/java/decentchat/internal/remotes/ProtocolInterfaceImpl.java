@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,13 +49,30 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 			if(contacts.containsKey(ip)) {
 				return contacts.get(ip);
 			}
-			//Naming.lookup("rmi://" + ip +":"+port+ "/node");
-			
 		} catch (ServerNotActiveException e) {
 			e.printStackTrace();
 		}
-		// TODO implement
-		return null;
+		throw new ContactNotFoundException();
+	}
+	
+	/**
+	 * Looks up a contact by using it's {@link ProtocolInterface}.
+	 * @return The contact associated with the
+	 * calling node.
+	 */
+	private ContactImpl getContact(ProtocolInterface prot) throws ContactNotFoundException {
+		if (!authenticate()) {
+			throw new ContactNotFoundException();
+		}
+		PublicKey key = null;
+		try {
+			key = prot.getPubKey();
+		} catch (RemoteException e) {
+			throw new ContactNotFoundException();
+		}
+		ContactImpl ret = null;
+		ret = (ContactImpl) instance.getContactManager().getContact(key);
+		return ret;
 	}
 
 	private boolean authenticate() {
@@ -93,21 +111,17 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 	}
 
 	@Override
-	public void notifyOnline(int port) throws RemoteException {
+	public void notifyOnline(ProtocolInterface protocolInterface) throws RemoteException {
 		try {
-			// TODO Use port in the future
-			ContactImpl contact = getContact();
-			contact.setOnline(getProtocolInterfaceForContact(contact));
-			contacts.put(getClientHost(), contact);
+			ContactImpl contact = getContact(protocolInterface);
+			if(contact != null) {
+				contact.setOnline(protocolInterface);
+				contacts.put(getClientHost(), contact);
+			}
 		} catch (ContactNotFoundException e) {
 		} catch (ServerNotActiveException e) {
 			e.printStackTrace();
 		}
-	}
-
-	private ProtocolInterface getProtocolInterfaceForContact(ContactImpl contact) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -150,6 +164,11 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 	public void ping() throws RemoteException {
 		// TODO is there anything that needs to be done
 		// here at all, except maybe logging?
+	}
+
+	@Override
+	public PublicKey getPubKey() throws RemoteException {
+		return instance.getPublicKey();
 	}
 
 

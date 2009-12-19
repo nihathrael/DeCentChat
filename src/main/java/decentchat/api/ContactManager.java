@@ -30,12 +30,12 @@ public class ContactManager implements Serializable {
 		contacts.remove(c.getPublicKey());
 	}
 
-	public Contact getContact(PublicKey pubkey) {
+	public Contact getContact(PublicKey pubkey) throws ContactNotFoundException {
 		if (contacts.containsKey(pubkey)) {
 			return contacts.get(pubkey);
 		} else {
 			logger.debug("No contact found with contact: " + pubkey);
-			return null;
+			throw new ContactNotFoundException();
 		}
 	}
 	

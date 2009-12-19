@@ -2,6 +2,7 @@ package decentchat.internal.remotes;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.security.PublicKey;
 
 import decentchat.api.Status;
 
@@ -19,6 +20,9 @@ public interface ProtocolInterface extends Remote {
 	 * @throws RemoteException
 	 */
 	public void sendMessage(String message) throws RemoteException;
+	
+	
+	public PublicKey getPubKey() throws RemoteException;
 
 	/**
 	 * Tells a contact that we want to go offline soon.
@@ -31,7 +35,7 @@ public interface ProtocolInterface extends Remote {
 	 * @param port TODO
 	 * @throws RemoteException
 	 */
-	public void notifyOnline(int port) throws RemoteException;
+	public void notifyOnline(ProtocolInterface protocolInterface) throws RemoteException;
 
 	/**
 	 * Tells a contact that our {@link Status} has changed.

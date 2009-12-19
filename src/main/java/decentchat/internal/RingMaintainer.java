@@ -34,22 +34,28 @@ public class RingMaintainer extends Thread {
 
 	public void stabilize() {
 		NodeKey hash = node.getKey().inc(1);
-	    Node x;
+	    Node x = null;
+	    Node succ = null;
 		try {
-			x = node.getSuccessor().getPredecessor();
+			succ = node.getSuccessor();
+			x = succ.getPredecessor();
+		} catch (RemoteException e) {
+			switchToNextSuccessor(node);
+			return;
+		}
+		try {
 		    if (x != null &&
 		    		// we're either pointing to ourselves
-		    		((node.getSuccessor().getKey().compareTo(node.getKey()) == 0 &&x.getKey().compareTo(node.getKey()) != 0)
+		    		((succ.getKey().compareTo(node.getKey()) == 0 &&x.getKey().compareTo(node.getKey()) != 0)
 		    		// or there is a node between us and node.getSuccessor()
-		            || (x.getKey().isWithin(hash, node.getSuccessor().getKey())))) {
+		            || (x.getKey().isWithin(hash, succ.getKey())))) {
 		        node.setSuccessor(x);
 		        logger.debug("New successor is " + x);
 		        node.getSuccessors().add(0, x);
 		    }
 		    node.getSuccessor().notify(node);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
 		}
 	}
 	
@@ -66,22 +72,8 @@ public class RingMaintainer extends Thread {
 		    	node.getFingers().set(last_fixed_finger, node.findSuccessor(hash));
 		    }
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("Fix fingers failed, waiting for next run");
 		}
-	}
-	
-	public List<Integer> shorten(List<Node> in) {
-		List<Integer> ret = new LinkedList<Integer>();
-		for (Node n: in) {
-			try {
-				ret.add((int)n.getKey().getHash()[0]);
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return ret;
 	}
 	
 	public void fixSuccessors() {
@@ -96,8 +88,7 @@ public class RingMaintainer extends Thread {
 		    }
 		    node.setSuccessors(succs);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			switchToNextSuccessor(node);
 		}
 	}
 
@@ -119,4 +110,17 @@ public class RingMaintainer extends Thread {
 		}
 	}
 	
+	private void switchToNextSuccessor(NodeImpl node) {
+		List<Node> nodes = node.getSuccessors();
+		if(nodes.size() > 1) {
+			logger.debug("Switched to next successor, old one was broken.");
+			node.setSuccessor(node.getSuccessors().get(1));
+			node.removeSuccessorFromList(nodes.get(0));
+		} else {
+			logger.debug("Using myself as successor, old one was broken.");
+			node.setSuccessor(node);
+			nodes.clear();
+			node.setSuccessors(nodes);
+		}
+	}
 }

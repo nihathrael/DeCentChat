@@ -16,10 +16,8 @@ import decentchat.internal.NodeKey;
 import decentchat.internal.RingMaintainer;
 import decentchat.internal.remotes.Node;
 import decentchat.internal.remotes.NodeImpl;
-import decentchat.internal.remotes.PullInterface;
-import decentchat.internal.remotes.PullInterfaceImpl;
-import decentchat.internal.remotes.PushInterface;
-import decentchat.internal.remotes.PushInterfaceImpl;
+import decentchat.internal.remotes.ProtocolInterface;
+import decentchat.internal.remotes.ProtocolInterfaceImpl;
 
 public class DeCentInstance {
 	
@@ -31,8 +29,7 @@ public class DeCentInstance {
 	private NodeImpl localNode;
 	private RingMaintainer maintainer;
 	private ContactManager contactManager;
-	private PushInterface pushInterface;
-	private PullInterface pullInterface;
+	private ProtocolInterface protocolInterface;
 	private PrivateKey privkey;
 	private PublicKey pubkey;
 
@@ -147,10 +144,8 @@ public class DeCentInstance {
 	private void createProtocolInterfaces() {
 		try {
 			logger.debug("Creating protocol Interface");
-			pullInterface = new PullInterfaceImpl(this);
-			registry.bind("pull", pullInterface);
-			pushInterface = new PushInterfaceImpl(registry, pullInterface);
-			registry.bind("push", pushInterface);
+			protocolInterface = new ProtocolInterfaceImpl(this);
+			registry.bind("interface", protocolInterface);
 			logger.debug("Protocol Interface successfully created.");
 		} catch (RemoteException e) {
 			logger.error("Error creating localnode", e);

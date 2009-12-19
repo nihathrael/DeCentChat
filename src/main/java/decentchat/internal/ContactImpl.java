@@ -7,7 +7,7 @@ import decentchat.api.Contact;
 import decentchat.api.ContactEventHandler;
 import decentchat.api.Status;
 import decentchat.exceptions.ContactOfflineException;
-import decentchat.internal.remotes.PushInterface;
+import decentchat.internal.remotes.ProtocolInterface;
 
 
 public class ContactImpl implements Contact {
@@ -16,7 +16,7 @@ public class ContactImpl implements Contact {
 	private Status status;
 	private String statusMessage;
 	private ContactEventHandler eventHandler;
-	private PushInterface pushInterface;
+	private ProtocolInterface protocolInterface;
 	
 	public ContactImpl(PublicKey pubkey, Status status) {
 		this.status = status;
@@ -24,7 +24,7 @@ public class ContactImpl implements Contact {
 		eventHandler = null;
 		status = null;
 		statusMessage = null;
-		pushInterface = null;
+		protocolInterface = null;
 	}
 	
 	@Override
@@ -49,11 +49,11 @@ public class ContactImpl implements Contact {
 
 	@Override
 	public void sendMessage(String message) throws ContactOfflineException {
-		if (pushInterface == null) {
+		if (protocolInterface == null) {
 			throw new ContactOfflineException();
 		} else {
 			try {
-				pushInterface.sendMessage(message);
+				protocolInterface.sendMessage(message);
 			} catch (RemoteException e) {
 				throw new ContactOfflineException();
 			}
@@ -113,14 +113,14 @@ public class ContactImpl implements Contact {
 	}
 	
 	/**
-	 * Stores the given {@link PushInterface} and notifies the
+	 * Stores the given {@link ProtocolInterface} and notifies the
 	 * {@link ContactEventHandler} that this contact is now
 	 * online.
-	 * @param pushInterface The {@link PushInterface} of this
+	 * @param pushInterface The {@link ProtocolInterface} of this
 	 * contact.
 	 */
-	public void setOnline(PushInterface pushInterface) {
-		this.pushInterface = pushInterface;
+	public void setOnline(ProtocolInterface pushInterface) {
+		this.protocolInterface = pushInterface;
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -134,7 +134,7 @@ public class ContactImpl implements Contact {
 	 * is now offline.
 	 */
 	public void setOffline() {
-		pushInterface = null;
+		protocolInterface = null;
 		new Thread(new Runnable() {
 			@Override
 			public void run() {

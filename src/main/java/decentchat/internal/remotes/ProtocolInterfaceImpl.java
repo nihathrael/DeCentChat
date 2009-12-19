@@ -1,29 +1,28 @@
 package decentchat.internal.remotes;
 
 import java.rmi.RemoteException;
-import java.rmi.registry.Registry;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.PrivateKey;
 
 import org.apache.log4j.Logger;
 
+import decentchat.api.DeCentInstance;
 import decentchat.api.Status;
 import decentchat.exceptions.ContactNotFoundException;
 import decentchat.internal.ContactImpl;
 
-public class PushInterfaceImpl extends UnicastRemoteObject implements PushInterface {
+public class ProtocolInterfaceImpl extends UnicastRemoteObject implements ProtocolInterface {
 
 	private static final long serialVersionUID = -4017058237863632726L;
 
-	static Logger logger = Logger.getLogger(PushInterfaceImpl.class);
+	static Logger logger = Logger.getLogger(ProtocolInterfaceImpl.class);
 
-	private Registry registry;
-	private PullInterface pullInterface;
+	private DeCentInstance instance;
 	
-	public PushInterfaceImpl(Registry registry, PullInterface pullInterface) throws RemoteException {
+	public ProtocolInterfaceImpl(DeCentInstance instance) throws RemoteException {
 		super();
-		this.registry = registry;
-		this.pullInterface = pullInterface;
+		this.instance = instance;
 	}
 	
 	/**
@@ -31,7 +30,7 @@ public class PushInterfaceImpl extends UnicastRemoteObject implements PushInterf
 	 * calling node. It does so in a two step
 	 * process:
 	 * 1. It tries to find it by IP
-	 * 2. If that fails, it gets it's push
+	 * 2. If that fails, it gets it's protocol
 	 *    interface and from there it's public key
 	 *    and tries to find it by that.
 	 * @return The contact associated with the
@@ -49,7 +48,7 @@ public class PushInterfaceImpl extends UnicastRemoteObject implements PushInterf
 		// TODO don't do this everytime
 		// TODO maybe there already is some java method for this?
 		int nonce = 0; // TODO generate real nonce
-		String message = pullInterface.authenticate(nonce);
+		String message = authenticate(nonce);
 		// TODO decrypt message
 		try {
 			if (!message.equals(getClientHost() + "/" + nonce)) {
@@ -75,13 +74,13 @@ public class PushInterfaceImpl extends UnicastRemoteObject implements PushInterf
 	public void notifyOnline() throws RemoteException {
 		try {
 			ContactImpl contact = getContact();
-			contact.setOnline(getPushInterfaceForContact(contact));
+			contact.setOnline(getProtocolInterfaceForContact(contact));
 		} catch (ContactNotFoundException e) {
 			// We're not interested then.
 		}
 	}
 
-	private PushInterface getPushInterfaceForContact(ContactImpl contact) {
+	private ProtocolInterface getProtocolInterfaceForContact(ContactImpl contact) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -113,5 +112,20 @@ public class PushInterfaceImpl extends UnicastRemoteObject implements PushInterf
 			// We're not interested then.
 		}
 	}
+
+	@Override
+	public String authenticate(int nonce) {
+		String message = instance.getIP() + "/" + nonce;
+		PrivateKey privkey = instance.getPrivateKey();
+		// TODO encrypt message with private key
+		return message;
+	}
+
+	@Override
+	public void ping() throws RemoteException {
+		// TODO is there anything that needs to be done
+		// here at all, except maybe logging?
+	}
+
 
 }

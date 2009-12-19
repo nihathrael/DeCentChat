@@ -6,12 +6,12 @@ import java.rmi.RemoteException;
 import decentchat.api.Status;
 
 /**
- * Encapsulates all push services, i.e. all services
+ * Encapsulates all remote services, i.e. all services
  * where we want to inform a contact of certain events.
  * 
  * @author k
  */
-public interface PushInterface extends Remote {
+public interface ProtocolInterface extends Remote {
 
 	/**
 	 * Sends a message to a contact.
@@ -43,5 +43,22 @@ public interface PushInterface extends Remote {
 	 * @param message Our current status message.
 	 */
 	public void setStatusMessage(String message) throws RemoteException;
+	
+	/**
+	 * Pings a contact.
+	 * @throws RemoteException
+	 */
+	public void ping() throws RemoteException;
+	
+	/**
+	 * Challenges a contact to authenticate itself by
+	 * asking it to encrypt a String of the form
+	 * "<contactIP>/<nonce>" with it's private key
+	 * and return the result.
+	 * @param nonce The nonce to use in the encryption
+	 * process. Prevents replay attacks.
+	 * @return The result of the encryption.
+	 */
+	public String authenticate(int nonce);
 
 }

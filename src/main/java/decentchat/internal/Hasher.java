@@ -5,6 +5,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.Arrays;
 
+import org.apache.log4j.Logger;
+
 public class Hasher {
 	
 	public final static int HASH_LENGTH_IN_BYTES = 40;
@@ -12,6 +14,8 @@ public class Hasher {
 
 	public final static byte[] MIN_HASH = generateHash((byte)0);
 	public final static byte[] MAX_HASH = generateHash((byte)-1);
+	
+	private final static Logger logger = Logger.getLogger(Hasher.class);
 
 	/**
 	 * Hashes the given input string using the hash
@@ -24,8 +28,8 @@ public class Hasher {
 		try {
 			md = MessageDigest.getInstance(HASH_ALGORITHM);
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.fatal("Unsupported encryption algorithm: " + HASH_ALGORITHM, e);
+			throw new RuntimeException("Unsupported encryption algorithm: " + HASH_ALGORITHM, e);
 		}
 	    md.update(input.getBytes(), 0, input.length());
 	    return md.digest();

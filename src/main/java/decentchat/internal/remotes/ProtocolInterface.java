@@ -32,7 +32,7 @@ public interface ProtocolInterface extends Remote {
 	
 	/**
 	 * Tells a contact that we are now online.
-	 * @param port TODO
+	 * @param protocolInterface Our {@link ProtocolInterface}
 	 * @throws RemoteException
 	 */
 	public void notifyOnline(ProtocolInterface protocolInterface) throws RemoteException;

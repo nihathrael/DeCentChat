@@ -50,6 +50,13 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 				if (!isAuthenticated(contact.getProtocolInterface())) {
 					throw new ContactNotFoundException();
 				}
+				try {
+					contact.getProtocolInterface().ping();
+				} catch (RemoteException e) {
+					contact.setOffline();
+					contacts.remove(contact);
+					throw new ContactNotFoundException();
+				}
 				return contact;
 			} else {
 				throw new ContactNotFoundException();
@@ -84,7 +91,6 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 	 * and <code>false</code> on a failure (of any kind).
 	 */
 	private boolean isAuthenticated(ProtocolInterface protocolInterface) {
-		// TODO don't do this everytime
 		String ip;
 		try {
 			ip = getClientHost();
@@ -92,10 +98,12 @@ public class ProtocolInterfaceImpl extends UnicastRemoteObject implements Protoc
 			logger.debug("getClientHost failed in isAuthenticated", e);
 			return false;
 		}
+		if (contacts.containsKey(ip)) {
+			return true;
+		}
 		long nonce = new SecureRandom().nextLong();
-		byte[] message = null;
 		try {
-			message = protocolInterface.authenticate(nonce);
+			byte[] message = protocolInterface.authenticate(nonce);
 			PublicKey pubkey = protocolInterface.getPubKey();
 			Cipher cipher = Encryption.getCipher();
 			cipher.init(Cipher.DECRYPT_MODE, pubkey);
